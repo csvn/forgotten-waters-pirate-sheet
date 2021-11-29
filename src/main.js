@@ -9,13 +9,13 @@ import starSignCoin from './images/coin-star-sign.png';
 const bufferToUrl = new WeakMap();
 
 class View extends LitElement {
-  #state = { ...this.defaultCoins() };
+  #state = this.#defaultState();
   #die;
 
   async connectedCallback() {
     super.connectedCallback();
     const state = await get('state');
-    this.#state = { ...state };
+    this.#state = { ...this.#state, ...state };
     this.requestUpdate();
   }
 
@@ -51,14 +51,30 @@ class View extends LitElement {
   clear() {
     const clear = confirm('Are you sure you want to remove all locally saved data?');
     if (!clear) return;
-    this.#state = { ...this.defaultCoins() };
+    this.#state = this.#defaultState();
     this.persist();
   }
 
-  defaultCoins() {
+  #defaultState() {
     const y = 90;
     return {
+      sheet1: undefined,
+      sheet2: undefined,
+      name: '',
+      blank1: '',
+      blank2: '',
+      blank3: '',
+      blank4: '',
+      blank5: '',
       coinSize: 80,
+      skills: {
+        exploration: 0,
+        brawn: 0,
+        hunting: 0,
+        aim: 0,
+        swagger: 0,
+        navigation: 0
+      },
       coins: [
         ...range(10).map(i => ({ id: i, type: 'bad-luck', x: 30 + 25 * i, y })),
         ...range(10).map(i => ({ id: i, type: 're-roll', x: 350 + 25 * i, y })),
@@ -100,6 +116,11 @@ class View extends LitElement {
     this.persist();
   }
 
+  setStat(skill, value) {
+    this.#state.skills[skill] = value;
+    this.persist();
+  }
+
   rollDie() {
     const iter = 10 + Math.random() * 12;
     let i = 0;
@@ -132,6 +153,20 @@ class View extends LitElement {
         header h1 {
           flex: 1;
           margin: 0;
+        }
+
+        header button {
+          cursor: pointer;
+          color: #fff;
+          background-color: #17368d;
+          border: 0;
+          border-radius: 5px;
+          height: 36px;
+          padding: 0 16px;
+          transition: all .25s;
+        }
+        header button:hover {
+          background-color: #37469d;
         }
 
         section {
@@ -179,18 +214,26 @@ class View extends LitElement {
           border-width: 5px;
         }
 
-        button {
-          cursor: pointer;
-          color: #fff;
-          background-color: #17368d;
-          border: 0;
-          border-radius: 5px;
-          height: 36px;
-          padding: 0 16px;
-          transition: all .25s;
+        .stats {
+          display: grid;
+          grid: repeat(7, 1fr) / repeat(8, 1fr);
+          position: absolute;
+          top: 75.8%;
+          left: 69.2%;
+          width: 23%;
+          height: 23%;
         }
-        button:hover {
-          background-color: #37469d;
+        .stat-value {
+          cursor: pointer;
+          background-color: transparent;
+          border: dashed 4px transparent;
+          transition: all .2s;
+        }
+        .stat-value:hover {
+          border-color: rgb(237 177 40 / 90%);
+        }
+        .stat-value.active {
+          background-color: rgb(237 177 40 / 40%);
         }
 
         .roll {
@@ -239,6 +282,11 @@ class View extends LitElement {
           <div class="sheet1 inputs">
             <input type="text" name="name" placeholder="Pirate name" .value=${this.#state.name ?? ''} @input=${this.updateField}>
           </div>
+          <div class="stats">
+            ${repeat(Object.keys(this.#state.skills), skill => repeat(range(8), value => html`
+              <button class="stat-value${value > 0 && this.#state.skills[skill] >= value ? ' active' : ''}" @click=${() => this.setStat(skill, value)}></button>
+            `))}
+          </div>
           <img src=${this.getSheet(0)}>
         </section>
       `}
@@ -254,6 +302,7 @@ class View extends LitElement {
           <img src=${this.getSheet(1)}>
         </section>
       `}
+
 
       ${ repeat(this.#state.coins, (c) => html`
         <div class="coin ${c.type}" .style="${this.coinStyle(c.x, c.y)}" .coin=${c} @mousedown=${this.coinDragStart}></div>
