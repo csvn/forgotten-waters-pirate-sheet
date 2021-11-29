@@ -1,6 +1,9 @@
 import { LitElement, html } from 'lit';
 import { repeat } from 'lit/directives/repeat.js';
 import { get, set } from 'idb-keyval';
+import badLuckCoin from './images/coin-bad-luck.png';
+import reRollCoin from './images/coin-re-roll.png';
+import starSignCoin from './images/coin-star-sign.png';
 
 
 const bufferToUrl = new WeakMap();
@@ -212,13 +215,13 @@ class View extends LitElement {
           user-select: none;
         }
         .coin.bad-luck {
-          background-image: url('/images/coin-bad-luck.png');
+          background-image: url('${badLuckCoin}');
         }
         .coin.re-roll {
-          background-image: url('/images/coin-re-roll.png');
+          background-image: url('${reRollCoin}');
         }
         .coin.star-sign {
-          background-image: url('/images/coin-star-sign.png');
+          background-image: url('${starSignCoin}');
         }
       </style>
 
