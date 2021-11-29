@@ -11,11 +11,13 @@ const bufferToUrl = new WeakMap();
 class View extends LitElement {
   #state = this.#defaultState();
   #die;
+  #players;
 
   async connectedCallback() {
     super.connectedCallback();
-    const state = await get('state');
+    const [state, players] = await Promise.all([get('state'), fetch('/players.json').then(r => r.json())]);
     this.#state = { ...this.#state, ...state };
+    this.#players = players;
     this.requestUpdate();
   }
 
@@ -121,6 +123,10 @@ class View extends LitElement {
     this.persist();
   }
 
+  changeFont(e) {
+    document.documentElement.style.setProperty('--font-family', e.currentTarget.value);
+  }
+
   rollDie() {
     const iter = 10 + Math.random() * 12;
     let i = 0;
@@ -137,15 +143,27 @@ class View extends LitElement {
     return html`
       <style>
         :host {
-          display: flex;
-          flex-direction: column;
+          display: grid;
+          grid: auto 1fr / minmax(600px, 1fr) auto;
           gap: 20px;
-          padding: 30px;
+          padding: 15px 30px 50px;
+        }
+
+        table th {
+          font-size: 32px;
+        }
+        table td {
+          font-size: 26px;
+        }
+        table th + th,
+        table td + td {
+          padding-left: 40px;
         }
 
         header {
           display: flex;
           align-items: center;
+          grid-column: span 2;
           gap: 20px;
           padding-bottom: 100px;
         }
@@ -155,18 +173,39 @@ class View extends LitElement {
           margin: 0;
         }
 
+        header input,
+        header select {
+          color: var(--on-bg);
+          background-color: rgba(255, 255, 255, .3);
+          border-radius: 5px;
+          font-size: inherit;
+          font-family: inherit;
+          line-height: 1.8;
+          margin: 0 10px;
+          padding: 0 10px;
+          width: 100px;
+        }
+        header select {
+          width: 200px;
+        }
+        header select option {
+          background-color: var(--bg-alt);
+        }
+
         header button {
           cursor: pointer;
-          color: #fff;
-          background-color: #17368d;
+          color: var(--on-primary);
+          background-color: var(--primary);
           border: 0;
           border-radius: 5px;
-          height: 36px;
-          padding: 0 16px;
+          font-size: inherit;
+          font-family: inherit;
+          line-height: 2.4;
+          padding: 0 24px;
           transition: all .25s;
         }
         header button:hover {
-          background-color: #37469d;
+          background-color: var(--primary-alt);
         }
 
         section {
@@ -200,13 +239,15 @@ class View extends LitElement {
 
         .inputs input {
           background-color: transparent;
-          border: dashed 7px rgb(237 177 40 / 40%);
+          border: dashed 7px var(--hint);
           flex: 1;
           font-size: 30px;
+          font-family: inherit;
           padding: 0 20px;
+          transition: all .2s;
         }
         .inputs input:focus-visible {
-          border: dashed 7px rgb(237 177 40 / 80%);
+          border-color: var(--hint-active);
           outline: 0;
         }
         .inputs.sheet2 input {
@@ -230,10 +271,10 @@ class View extends LitElement {
           transition: all .2s;
         }
         .stat-value:hover {
-          border-color: rgb(237 177 40 / 90%);
+          border-color: var(--hint-active);
         }
         .stat-value.active {
-          background-color: rgb(237 177 40 / 40%);
+          background-color: var(--hint);
         }
 
         .roll {
@@ -276,32 +317,61 @@ class View extends LitElement {
         <button @click=${() => this.selectSheet(1)}>Set Pirate sheet 2</button>
         <button @click=${this.clear}>Clear</button>
         <label>Coin size:<input type="number" .value=${this.#state.coinSize} @input=${this.updateCoinSize}></label>
+        <label>
+          Font:
+          <select @change=${this.changeFont}>
+            <option value="Mansalva" selected>Mansalva</option>
+            <option value="Caveat">Caveat</option>
+            <option value="JustMeAgainDownHere">Just Me Again Down Here</option>
+            <option value="Verdana">Verdana</option>
+          </select>
+        </label>
       </header>
-      ${!this.#state.sheet1 ? '' : html`
-        <section>
-          <div class="sheet1 inputs">
-            <input type="text" name="name" placeholder="Pirate name" .value=${this.#state.name ?? ''} @input=${this.updateField}>
-          </div>
-          <div class="stats">
-            ${repeat(Object.keys(this.#state.skills), skill => repeat(range(8), value => html`
-              <button class="stat-value${value > 0 && this.#state.skills[skill] >= value ? ' active' : ''}" @click=${() => this.setStat(skill, value)}></button>
-            `))}
-          </div>
-          <img src=${this.getSheet(0)}>
-        </section>
-      `}
-      ${!this.#state.sheet2 ? '' : html`
-        <section>
-          <div class="sheet2 inputs">
-            <input type="text" name="blank1" placeholder="Story blank 1" .value=${this.#state.blank1 ?? ''} @input=${this.updateField}>
-            <input type="text" name="blank2" placeholder="Story blank 2" .value=${this.#state.blank2 ?? ''} @input=${this.updateField}>
-            <input type="text" name="blank3" placeholder="Story blank 3" .value=${this.#state.blank3 ?? ''} @input=${this.updateField}>
-            <input type="text" name="blank4" placeholder="Story blank 4" .value=${this.#state.blank4 ?? ''} @input=${this.updateField}>
-            <input type="text" name="blank5" placeholder="Story blank 5" .value=${this.#state.blank5 ?? ''} @input=${this.updateField}>
-          </div>
-          <img src=${this.getSheet(1)}>
-        </section>
-      `}
+      <main>
+        ${!this.#state.sheet1 ? '' : html`
+          <section>
+            <div class="sheet1 inputs">
+              <input type="text" name="name" placeholder="Pirate name" .value=${this.#state.name ?? ''} @input=${this.updateField}>
+            </div>
+            <div class="stats">
+              ${repeat(Object.keys(this.#state.skills), skill => repeat(range(8), value => html`
+                <button class="stat-value${value > 0 && this.#state.skills[skill] >= value ? ' active' : ''}" @click=${() => this.setStat(skill, value)}></button>
+              `))}
+            </div>
+            <img src=${this.getSheet(0)}>
+          </section>
+        `}
+        ${!this.#state.sheet2 ? '' : html`
+          <section>
+            <div class="sheet2 inputs">
+              <input type="text" name="blank1" placeholder="Story blank 1" .value=${this.#state.blank1 ?? ''} @input=${this.updateField}>
+              <input type="text" name="blank2" placeholder="Story blank 2" .value=${this.#state.blank2 ?? ''} @input=${this.updateField}>
+              <input type="text" name="blank3" placeholder="Story blank 3" .value=${this.#state.blank3 ?? ''} @input=${this.updateField}>
+              <input type="text" name="blank4" placeholder="Story blank 4" .value=${this.#state.blank4 ?? ''} @input=${this.updateField}>
+              <input type="text" name="blank5" placeholder="Story blank 5" .value=${this.#state.blank5 ?? ''} @input=${this.updateField}>
+            </div>
+            <img src=${this.getSheet(1)}>
+          </section>
+        `}
+      </main>
+      <aside>
+        <table>
+          <thead>
+            <tr>
+              <th>Player</th>
+              <th>Pirate Name</th>
+              <th>Pirate Type</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${repeat(this.#players ?? [], ([name, type, pirateName]) => html`<tr>
+              <td>${name}</td>
+              <td>${pirateName}</td>
+              <td>${type}</td>
+            </tr>`)}
+          </tbody>
+        </table>
+      </aside>
 
 
       ${ repeat(this.#state.coins, (c) => html`
