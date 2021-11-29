@@ -4,6 +4,7 @@ import { repeat } from 'lit/directives/repeat.js';
 import { get, set } from 'idb-keyval';
 import { selectFile } from './dom';
 import players from './players.json';
+import draw from './images/draw.png';
 import badLuckCoin from './images/coin-bad-luck.png';
 import reRollCoin from './images/coin-re-roll.png';
 import starSignCoin from './images/coin-star-sign.png';
@@ -78,6 +79,17 @@ export class View extends LitElement {
     }
     header button:hover {
       background-color: var(--primary-alt);
+    }
+
+    .star-chart {
+      cursor: url('${unsafeCSS(draw)}') 0 20, pointer;
+      position: absolute;
+      top: 17%;
+      left: 59%;
+      width: 31.5%;
+      height: 37.5%;
+      overflow: hidden;
+      user-select: none;
     }
 
     section {
@@ -185,6 +197,7 @@ export class View extends LitElement {
     }
   `;
 
+  #canvas = this.#createCanvas();
   #state = this.#defaultState();
   #die?: number;
   #sentStoragePrompt = false;
@@ -193,6 +206,15 @@ export class View extends LitElement {
     super.connectedCallback();
     const state = await get('state');
     this.#state = { ...this.#state, ...state };
+
+    if (this.#state.starSign) {
+      const img = new Image();
+      const canvas = this.#canvas;
+      const drawImage = () => canvas.getContext('2d')!.drawImage(img, 0, 0);
+      img.src = URL.createObjectURL(this.#state.starSign);
+      img.addEventListener('load', drawImage, { once: true });
+    }
+
     this.requestUpdate();
   }
 
@@ -235,6 +257,7 @@ export class View extends LitElement {
   clear() {
     const clear = confirm('Are you sure you want to remove all locally saved data?');
     if (!clear) return;
+    this.#canvas = this.#createCanvas();
     this.#state = this.#defaultState();
     this.persist();
   }
@@ -244,6 +267,7 @@ export class View extends LitElement {
     return {
       sheet1: undefined as ArrayBuffer | undefined,
       sheet2: undefined as ArrayBuffer | undefined,
+      starSign: undefined as Blob | undefined,
       name: '',
       blank1: '',
       blank2: '',
@@ -265,6 +289,13 @@ export class View extends LitElement {
         ...range(5).map(i => ({ id: i, type: 'star-sign', x: 670 + 25 * i, y }))
       ]
     }
+  }
+
+  #createCanvas() {
+    const canvas = document.createElement('canvas');
+    canvas.width = 600;
+    canvas.height = 600;
+    return canvas;
   }
 
   coinStyle(x: number, y: number, size = this.#state.coinSize) {
@@ -309,6 +340,40 @@ export class View extends LitElement {
     document.documentElement.style.setProperty('--font-family', (e.currentTarget as HTMLSelectElement).value);
   }
 
+  startDraw(e: MouseEvent) {
+    const canvas = this.#canvas;
+    const ctx = canvas.getContext('2d')!;
+    const doErase = e.button === 2;
+    const { x, y } = canvas.getBoundingClientRect();
+
+    const draw = (e: MouseEvent) => {
+      ctx.beginPath();
+      ctx.fillStyle = 'firebrick';
+      ctx.arc(e.x - x, e.y - y, doErase ? 9 : 5, 0, 2 * Math.PI);
+      if (doErase) {
+        ctx.save();
+        ctx.clip();
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.restore();
+      } else {
+        ctx.fill();
+      }
+    };
+    const drawStop = () => {
+      this.#canvas.toBlob(blob => {
+        this.#state.starSign = blob!;
+        this.persist();
+      });
+      document.body.removeEventListener('mousemove', draw);
+      document.body.removeEventListener('mouseup', drawStop);
+    };
+
+    document.body.addEventListener('mousemove', draw);
+    document.body.addEventListener('mouseup', drawStop);
+
+    draw(e);
+  }
+
   rollDie() {
     const iter = 10 + Math.random() * 12;
     let i = 0;
@@ -346,6 +411,9 @@ export class View extends LitElement {
           <section>
             <div class="sheet1 inputs">
               <input type="text" name="name" placeholder="Pirate name" .value=${this.#state.name ?? ''} @input=${this.updateField}>
+            </div>
+            <div class="star-chart" @mousedown=${ this.startDraw } @contextmenu=${ (e: Event) => e.preventDefault() }>
+              ${this.#canvas}
             </div>
             <div class="stats">
               ${repeat(Object.keys(this.#state.skills), skill => repeat(range(8), value => html`
