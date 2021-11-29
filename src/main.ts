@@ -187,6 +187,7 @@ export class View extends LitElement {
 
   #state = this.#defaultState();
   #die?: number;
+  #sentStoragePrompt = false;
 
   async connectedCallback() {
     super.connectedCallback();
@@ -214,6 +215,13 @@ export class View extends LitElement {
 
   async persist() {
     this.requestUpdate();
+
+    const storage = navigator.storage;
+    if (!this.#sentStoragePrompt && storage && !await storage.persisted()) {
+      await storage.persist();
+      this.#sentStoragePrompt = true;
+    }
+
     await set('state', this.#state);
   }
 
