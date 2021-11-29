@@ -1,17 +1,188 @@
-import { LitElement, html } from 'lit';
+import { LitElement, css, html, unsafeCSS } from 'lit';
+import { customElement } from 'lit/decorators.js';
 import { repeat } from 'lit/directives/repeat.js';
 import { get, set } from 'idb-keyval';
+import { selectFile } from './dom';
 import players from './players.json';
 import badLuckCoin from './images/coin-bad-luck.png';
 import reRollCoin from './images/coin-re-roll.png';
 import starSignCoin from './images/coin-star-sign.png';
 
 
-const bufferToUrl = new WeakMap();
+const bufferToUrl = new WeakMap<ArrayBuffer, string>();
 
-class View extends LitElement {
+@customElement('x-root')
+export class View extends LitElement {
+  static styles = css`
+    :host {
+      display: grid;
+      grid: auto 1fr / minmax(600px, 1fr) auto;
+      gap: 20px;
+      padding: 15px 30px 50px;
+    }
+
+    table th {
+      font-size: 32px;
+    }
+    table td {
+      font-size: 26px;
+    }
+    table th + th,
+    table td + td {
+      padding-left: 40px;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      grid-column: span 2;
+      gap: 20px;
+      padding-bottom: 100px;
+    }
+
+    header h1 {
+      flex: 1;
+      margin: 0;
+    }
+
+    header input,
+    header select {
+      color: var(--on-bg);
+      background-color: rgba(255, 255, 255, .3);
+      border-radius: 5px;
+      font-size: inherit;
+      font-family: inherit;
+      line-height: 1.8;
+      margin: 0 10px;
+      padding: 0 10px;
+      width: 100px;
+    }
+    header select {
+      width: 200px;
+    }
+    header select option {
+      background-color: var(--bg-alt);
+    }
+
+    header button {
+      cursor: pointer;
+      color: var(--on-primary);
+      background-color: var(--primary);
+      border: 0;
+      border-radius: 5px;
+      font-size: inherit;
+      font-family: inherit;
+      line-height: 2.4;
+      padding: 0 24px;
+      transition: all .25s;
+    }
+    header button:hover {
+      background-color: var(--primary-alt);
+    }
+
+    section {
+      flex: 1;
+      position: relative;
+      max-width: 1600px;
+    }
+    section img {
+      width: 100%;
+      height: auto;
+    }
+
+    .inputs {
+      display: flex;
+      flex-direction: column;
+      position: absolute;
+      gap: 2%;
+    }
+    .sheet1 {
+      top: 11%;
+      left: 56%;
+      width: 37%;
+      height: 6.5%;
+    }
+    .sheet2 {
+      top: 13%;
+      left: 20.5%;
+      width: 25%;
+      height: 27%;
+    }
+
+    .inputs input {
+      background-color: transparent;
+      border: dashed 7px var(--hint);
+      flex: 1;
+      font-size: 30px;
+      font-family: inherit;
+      padding: 0 20px;
+      transition: all .2s;
+    }
+    .inputs input:focus-visible {
+      border-color: var(--hint-active);
+      outline: 0;
+    }
+    .inputs.sheet2 input {
+      font-size: 24px;
+      border-width: 5px;
+    }
+
+    .stats {
+      display: grid;
+      grid: repeat(7, 1fr) / repeat(8, 1fr);
+      position: absolute;
+      top: 75.8%;
+      left: 69.2%;
+      width: 23%;
+      height: 23%;
+    }
+    .stat-value {
+      cursor: pointer;
+      background-color: transparent;
+      border: dashed 4px transparent;
+      transition: all .2s;
+    }
+    .stat-value:hover {
+      border-color: var(--hint-active);
+    }
+    .stat-value.active {
+      background-color: var(--hint);
+    }
+
+    .roll {
+      font-size: 20px;
+      white-space: pre;
+    }
+    .roll-value {
+      font-family: monospace;
+    }
+
+    .coin {
+      --size: 80px;
+      cursor: move;
+      background-position: center;
+      background-size: 120%;
+      border-radius: 50%;
+      top: var(--y);
+      left: var(--x);
+      width: var(--size);
+      height: var(--size);
+      position: absolute;
+      user-select: none;
+    }
+    .coin.bad-luck {
+      background-image: url('${unsafeCSS(badLuckCoin)}');
+    }
+    .coin.re-roll {
+      background-image: url('${unsafeCSS(reRollCoin)}');
+    }
+    .coin.star-sign {
+      background-image: url('${unsafeCSS(starSignCoin)}');
+    }
+  `;
+
   #state = this.#defaultState();
-  #die;
+  #die?: number;
 
   async connectedCallback() {
     super.connectedCallback();
@@ -20,15 +191,15 @@ class View extends LitElement {
     this.requestUpdate();
   }
 
-  getSheet(index) {
+  getSheet(index: 0 | 1) {
     const buffer = this.#state[index === 0 ? 'sheet1' : 'sheet2'];
-    if (!bufferToUrl.has(buffer)) {
+    if (buffer && !bufferToUrl.has(buffer)) {
       bufferToUrl.set(buffer, URL.createObjectURL(new Blob([buffer])));
     }
-    return bufferToUrl.get(buffer);
+    return bufferToUrl.get(buffer!);
   }
 
-  async selectSheet(index) {
+  async selectSheet(index: 0 | 1) {
     const file = await selectFile('image/*');
     if (!file) return;
     const ab = await file.arrayBuffer();
@@ -42,8 +213,8 @@ class View extends LitElement {
     await set('state', this.#state);
   }
 
-  updateField(event) {
-    const el = event.currentTarget;
+  updateField(event: InputEvent) {
+    const el = event.currentTarget as HTMLInputElement;
     const name = el.name;
     this.#state[name] = el.value;
     this.persist();
@@ -59,8 +230,8 @@ class View extends LitElement {
   #defaultState() {
     const y = 90;
     return {
-      sheet1: undefined,
-      sheet2: undefined,
+      sheet1: undefined as ArrayBuffer | undefined,
+      sheet2: undefined as ArrayBuffer | undefined,
       name: '',
       blank1: '',
       blank2: '',
@@ -84,16 +255,16 @@ class View extends LitElement {
     }
   }
 
-  coinStyle(x, y, size = this.#state.coinSize) {
+  coinStyle(x: number, y: number, size = this.#state.coinSize) {
     return `--x: ${x}; --y: ${y}; --size: ${size};`;
   }
 
-  coinDragStart(e) {
-    const coin = e.currentTarget;
+  coinDragStart(e: MouseEvent) {
+    const coin = e.currentTarget as HTMLElement & { coin: any };
     const { x, y } = coin.coin;
     const { pageX: startX, pageY: startY } = e;
 
-    const drag = e => {
+    const drag = (e: MouseEvent) => {
       const { pageX, pageY } = e;
       const dx = pageX - startX;
       const dy = pageY - startY;
@@ -111,19 +282,19 @@ class View extends LitElement {
     document.body.addEventListener('mouseup', dragStop);
   }
 
-  updateCoinSize(e) {
-    const value = e.currentTarget.value;
+  updateCoinSize(e: Event) {
+    const value = (e.currentTarget as HTMLInputElement).value as any as number;
     this.#state.coinSize = value;
     this.persist();
   }
 
-  setStat(skill, value) {
+  setStat(skill: string, value: number) {
     this.#state.skills[skill] = value;
     this.persist();
   }
 
-  changeFont(e) {
-    document.documentElement.style.setProperty('--font-family', e.currentTarget.value);
+  changeFont(e: Event) {
+    document.documentElement.style.setProperty('--font-family', (e.currentTarget as HTMLSelectElement).value);
   }
 
   rollDie() {
@@ -140,174 +311,6 @@ class View extends LitElement {
 
   render() {
     return html`
-      <style>
-        :host {
-          display: grid;
-          grid: auto 1fr / minmax(600px, 1fr) auto;
-          gap: 20px;
-          padding: 15px 30px 50px;
-        }
-
-        table th {
-          font-size: 32px;
-        }
-        table td {
-          font-size: 26px;
-        }
-        table th + th,
-        table td + td {
-          padding-left: 40px;
-        }
-
-        header {
-          display: flex;
-          align-items: center;
-          grid-column: span 2;
-          gap: 20px;
-          padding-bottom: 100px;
-        }
-
-        header h1 {
-          flex: 1;
-          margin: 0;
-        }
-
-        header input,
-        header select {
-          color: var(--on-bg);
-          background-color: rgba(255, 255, 255, .3);
-          border-radius: 5px;
-          font-size: inherit;
-          font-family: inherit;
-          line-height: 1.8;
-          margin: 0 10px;
-          padding: 0 10px;
-          width: 100px;
-        }
-        header select {
-          width: 200px;
-        }
-        header select option {
-          background-color: var(--bg-alt);
-        }
-
-        header button {
-          cursor: pointer;
-          color: var(--on-primary);
-          background-color: var(--primary);
-          border: 0;
-          border-radius: 5px;
-          font-size: inherit;
-          font-family: inherit;
-          line-height: 2.4;
-          padding: 0 24px;
-          transition: all .25s;
-        }
-        header button:hover {
-          background-color: var(--primary-alt);
-        }
-
-        section {
-          flex: 1;
-          position: relative;
-          max-width: 1600px;
-        }
-        section img {
-          width: 100%;
-          height: auto;
-        }
-
-        .inputs {
-          display: flex;
-          flex-direction: column;
-          position: absolute;
-          gap: 2%;
-        }
-        .sheet1 {
-          top: 11%;
-          left: 56%;
-          width: 37%;
-          height: 6.5%;
-        }
-        .sheet2 {
-          top: 13%;
-          left: 20.5%;
-          width: 25%;
-          height: 27%;
-        }
-
-        .inputs input {
-          background-color: transparent;
-          border: dashed 7px var(--hint);
-          flex: 1;
-          font-size: 30px;
-          font-family: inherit;
-          padding: 0 20px;
-          transition: all .2s;
-        }
-        .inputs input:focus-visible {
-          border-color: var(--hint-active);
-          outline: 0;
-        }
-        .inputs.sheet2 input {
-          font-size: 24px;
-          border-width: 5px;
-        }
-
-        .stats {
-          display: grid;
-          grid: repeat(7, 1fr) / repeat(8, 1fr);
-          position: absolute;
-          top: 75.8%;
-          left: 69.2%;
-          width: 23%;
-          height: 23%;
-        }
-        .stat-value {
-          cursor: pointer;
-          background-color: transparent;
-          border: dashed 4px transparent;
-          transition: all .2s;
-        }
-        .stat-value:hover {
-          border-color: var(--hint-active);
-        }
-        .stat-value.active {
-          background-color: var(--hint);
-        }
-
-        .roll {
-          font-size: 20px;
-          white-space: pre;
-        }
-        .roll-value {
-          font-family: monospace;
-        }
-
-        .coin {
-          --size: 80px;
-          cursor: move;
-          background-position: center;
-          background-size: 120%;
-          border-radius: 50%;
-          top: var(--y);
-          left: var(--x);
-          width: var(--size);
-          height: var(--size);
-          position: absolute;
-          user-select: none;
-        }
-        .coin.bad-luck {
-          background-image: url('${badLuckCoin}');
-        }
-        .coin.re-roll {
-          background-image: url('${reRollCoin}');
-        }
-        .coin.star-sign {
-          background-image: url('${starSignCoin}');
-        }
-      </style>
-
       <header>
         <h1>Forgotten Waters - Pirate sheet</h1>
         ${this.#die === undefined ? '' : html`<span class="roll">Current roll: <span class="roll-value">${String(this.#die + 1).padStart(2, ' ')}</span></span>`}
@@ -379,25 +382,7 @@ class View extends LitElement {
     `;
   }
 }
-customElements.define('x-root', View);
 
-function range(index) {
+function range(index: number) {
   return Array.from({ length: index }, (_, i) => i);
-}
-
-async function selectFile(mime) {
-  const file = document.createElement('input');
-  file.type = 'file';
-  file.accept = mime;
-  file.multiple = false;
-  file.hidden = true;
-  file.click();
-  await nextEvent(file, 'change');
-  return file.files?.[0];
-}
-
-function nextEvent(el, event) {
-  return new Promise(resolve => {
-    el.addEventListener(event, e => resolve(e), { once: true });
-  });
 }

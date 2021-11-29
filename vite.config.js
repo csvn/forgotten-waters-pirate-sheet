@@ -3,6 +3,6 @@ export default {
   base: '/forgotten-waters-pirate-sheet/',
   build: {
     outDir: '../dist',
-    assetInlinlineLimit: 0
+    emptyOutDir: true
   }
 }
