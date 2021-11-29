@@ -169,15 +169,19 @@ export class View extends LitElement {
       height: var(--size);
       position: absolute;
       user-select: none;
+      filter: brightness(1.25);
     }
     .coin.bad-luck {
       background-image: url('${unsafeCSS(badLuckCoin)}');
+      filter: brightness(1.6);
+      transform: rotate(120deg);
     }
     .coin.re-roll {
       background-image: url('${unsafeCSS(reRollCoin)}');
     }
     .coin.star-sign {
       background-image: url('${unsafeCSS(starSignCoin)}');
+      transform: rotate(45deg);
     }
   `;
 
