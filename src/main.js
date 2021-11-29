@@ -1,6 +1,7 @@
 import { LitElement, html } from 'lit';
 import { repeat } from 'lit/directives/repeat.js';
 import { get, set } from 'idb-keyval';
+import players from './players.json';
 import badLuckCoin from './images/coin-bad-luck.png';
 import reRollCoin from './images/coin-re-roll.png';
 import starSignCoin from './images/coin-star-sign.png';
@@ -11,13 +12,11 @@ const bufferToUrl = new WeakMap();
 class View extends LitElement {
   #state = this.#defaultState();
   #die;
-  #players;
 
   async connectedCallback() {
     super.connectedCallback();
-    const [state, players] = await Promise.all([get('state'), fetch('/players.json').then(r => r.json())]);
+    const state = await get('state');
     this.#state = { ...this.#state, ...state };
-    this.#players = players;
     this.requestUpdate();
   }
 
@@ -364,7 +363,7 @@ class View extends LitElement {
             </tr>
           </thead>
           <tbody>
-            ${repeat(this.#players ?? [], ([name, type, pirateName]) => html`<tr>
+            ${repeat(players, ([name, type, pirateName]) => html`<tr>
               <td>${name}</td>
               <td>${pirateName}</td>
               <td>${type}</td>
