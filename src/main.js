@@ -212,13 +212,13 @@ class View extends LitElement {
           user-select: none;
         }
         .coin.bad-luck {
-          background-image: url('/coin-bad-luck.png');
+          background-image: url('/images/coin-bad-luck.png');
         }
         .coin.re-roll {
-          background-image: url('/coin-re-roll.png');
+          background-image: url('/images/coin-re-roll.png');
         }
         .coin.star-sign {
-          background-image: url('/coin-star-sign.png');
+          background-image: url('/images/coin-star-sign.png');
         }
       </style>
 
