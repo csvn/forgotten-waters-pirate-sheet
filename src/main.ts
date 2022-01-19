@@ -4,10 +4,10 @@ import { repeat } from 'lit/directives/repeat.js';
 import { get, set } from 'idb-keyval';
 import { selectFile } from './dom';
 import players from './players.json';
-import draw from './images/draw.png';
-import badLuckCoin from './images/coin-bad-luck.png';
-import reRollCoin from './images/coin-re-roll.png';
-import starSignCoin from './images/coin-star-sign.png';
+import draw from './images/draw.webp';
+import badLuckCoin from './images/coin-bad-luck.webp';
+import reRollCoin from './images/coin-re-roll.webp';
+import starSignCoin from './images/coin-star-sign.webp';
 
 
 const bufferToUrl = new WeakMap<ArrayBuffer, string>();
@@ -186,7 +186,7 @@ export class View extends LitElement {
     .coin.bad-luck {
       background-image: url('${unsafeCSS(badLuckCoin)}');
       filter: brightness(1.6);
-      transform: rotate(120deg);
+      transform: rotate(30deg);
     }
     .coin.re-roll {
       background-image: url('${unsafeCSS(reRollCoin)}');
