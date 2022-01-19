@@ -4,10 +4,10 @@ import { repeat } from 'lit/directives/repeat.js';
 import { get, set } from 'idb-keyval';
 import { selectFile } from './dom';
 import players from './players.json';
-import draw from './images/draw.webp';
-import badLuckCoin from './images/coin-bad-luck.webp';
-import reRollCoin from './images/coin-re-roll.webp';
-import starSignCoin from './images/coin-star-sign.webp';
+import draw from './assets/draw.webp';
+import badLuckCoin from './assets/coin-bad-luck.webp';
+import reRollCoin from './assets/coin-re-roll.webp';
+import starSignCoin from './assets/coin-star-sign.webp';
 
 
 const bufferToUrl = new WeakMap<ArrayBuffer, string>();
