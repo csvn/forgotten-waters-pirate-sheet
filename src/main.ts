@@ -3,7 +3,6 @@ import { customElement } from 'lit/decorators.js';
 import { repeat } from 'lit/directives/repeat.js';
 import { get, set } from 'idb-keyval';
 import { selectFile } from './dom';
-import players from './players.json';
 import draw from './assets/draw.webp';
 import badLuckCoin from './assets/coin-bad-luck.webp';
 import reRollCoin from './assets/coin-re-roll.webp';
@@ -446,7 +445,7 @@ export class View extends LitElement {
             </tr>
           </thead>
           <tbody>
-            ${repeat(players, ([name, type, pirateName]) => html`<tr>
+            ${repeat([] as [string, string, string][], ([name, type, pirateName]) => html`<tr>
               <td>${name}</td>
               <td>${pirateName}</td>
               <td>${type}</td>
