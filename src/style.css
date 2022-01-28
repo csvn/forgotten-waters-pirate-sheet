@@ -29,9 +29,15 @@
   --hint: rgb(237 177 40 / 40%);
   --hint-active: rgb(237 177 40 / 85%);
 
+  /* Measuerements */
+  --paper-ratio: 1.455;
+
+  /* Transforms */
+  --sheet-filter: invert(0.9);
+
   color: var(--on-bg);
   background-color: var(--bg);
-  font-size: 24px;
+  font-size: 22px;
   font-family: var(--font-family), sans-serif;
 }
 

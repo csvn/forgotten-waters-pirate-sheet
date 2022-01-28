@@ -1,0 +1,19 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+    {
+      "type": "npm",
+      "label": "npm: start",
+      "script": "start",
+      "detail": "vite",
+      "problemMatcher": []
+    },
+    {
+      "type": "npm",
+      "label": "npm: build",
+      "script": "build",
+      "detail": "vite build",
+      "problemMatcher": []
+    }
+	]
+}
