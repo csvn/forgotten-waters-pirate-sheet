@@ -9,6 +9,7 @@ import pageTurn2 from './assets/sounds/page-turn-2.mp3';
 import pageTurn3 from './assets/sounds/page-turn-3.mp3';
 import './components/coin';
 import './components/controls';
+import './components/icon';
 import './components/sheet';
 
 

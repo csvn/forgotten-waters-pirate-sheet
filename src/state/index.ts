@@ -1,7 +1,7 @@
 import { combineReducers } from '@reduxjs/toolkit';
 import { coins, type CoinsState } from './coins';
 import { constellation, type ConstellationEvents, type ConstellationState } from './constellation';
-import { clear } from './global';
+import { clear, constellationToggle } from './global';
 import { skills, type SkillsState } from './skills';
 import { social, type StoryBlanks, type SocialState } from './social';
 import { ui, type UIState } from './ui';
@@ -17,7 +17,7 @@ export const rootReducer = combineReducers({
 
 export const actions = {
   coins: coins.actions,
-  constellation: constellation.actions,
+  constellation: { ...constellation.actions, toggle: constellationToggle },
   global: { clear },
   skills: skills.actions,
   social: social.actions,

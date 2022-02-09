@@ -5,9 +5,11 @@ declare global {
 }
 
 const imageMap = Object.fromEntries(
-  Object.entries(import.meta.globEager('./assets/**/*.webp'))
+  Object.entries(import.meta.globEager('./assets/**/*.(svg|webp)'))
     .map(([path, module]) => [path, module.default] as const)
 );
+
+export  const svgIcons = imageMap['./assets/icons.svg'];
 
 export const drawIcon = imageMap['./assets/draw.webp'];
 

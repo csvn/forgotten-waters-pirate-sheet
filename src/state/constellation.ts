@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { constellationToggle } from './global';
 
 
 const initialState: ConstellationState = {
@@ -16,5 +17,15 @@ export interface ConstellationState {
 export const constellation = createSlice({
   name: 'constellation',
   initialState,
-  reducers: {}
+  reducers: {},
+  extraReducers: builder => {
+    builder.addCase(constellationToggle, (state, action) => {
+      const index = state.progress.indexOf(action.payload);
+      if (index >= 0) {
+        state.progress.splice(index, 1);
+      } else {
+        state.progress.push(action.payload);
+      }
+    })
+  }
 });
