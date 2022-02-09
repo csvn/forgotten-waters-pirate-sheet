@@ -31,7 +31,7 @@ export function event(target: EventTarget, event: string) {
 
 export function inputActionFactory(stateController: StateController) {
   return (actionCreator: (value: string) => AnyAction) => {
-    const dispatchDebounced = debounce(800, (value: string) => stateController.dispatch(actionCreator(value)));
+    const dispatchDebounced = debounce(200, (value: string) => stateController.dispatch(actionCreator(value)));
     return (event: InputEvent) => dispatchDebounced((event.currentTarget as HTMLInputElement).value);
   };
 }

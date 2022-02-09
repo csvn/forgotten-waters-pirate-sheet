@@ -490,7 +490,6 @@
       { "x": 0.9, "y": 0.3, "type": "progress" },
       { "x": 0.1, "y": 0.5, "type": "progress" },
       { "x": 0.3, "y": 0.5, "type": "progress" },
-      { "x": 0.5, "y": 0.5, "type": "progress" },
       { "x": 0.7, "y": 0.5, "type": "event" },
       { "x": 0.9, "y": 0.5, "type": "event" },
       { "x": 0.1, "y": 0.7, "type": "event" },

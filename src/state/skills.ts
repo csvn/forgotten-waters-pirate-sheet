@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { clear } from './global';
 
 
 const initialState: SkillsState = {
@@ -27,5 +28,8 @@ export const skills = createSlice({
       const [skill, value] = action.payload;
       state[skill] = value;
     }
+  },
+  extraReducers: builder => {
+    builder.addCase(clear, () => initialState);
   }
 });

@@ -21,19 +21,21 @@
   --font-family: Mansalva;
   /* Colors */
   --on-bg: rgb(255 255 255 / 90%);
-  --bg: #222;
-  --bg-alt: #353535;
+  --bg: rgb(34 34 34);
+  --bg-alt: rgb(53 53 53);
   --on-primary: rgb(255 255 255 / 90%);
-  --primary: #17368d;
-  --primary-alt: #37469d;
+  --primary: rgb(23 54 141);
+  --primary-alt: rgb(55 70 157);
   --hint: rgb(237 177 40 / 40%);
   --hint-active: rgb(237 177 40 / 85%);
+  --scrollbar: rgb(70 80 110);
+  --scrollbar-active: rgb(11 39 117);
 
   /* Measuerements */
   --paper-ratio: 1.455;
 
   /* Transforms */
-  --sheet-filter: invert(0.9);
+  --sheet-filter: hue-rotate(195deg) invert(0.9);
 
   color: var(--on-bg);
   background-color: var(--bg);
@@ -43,4 +45,20 @@
 
 body {
   margin: 0;
+}
+
+body::-webkit-scrollbar {
+  width: 0.6rem;
+}
+
+body::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+body::-webkit-scrollbar-thumb {
+  background-color: var(--scrollbar);
+  border-radius: 0.3rem;
+}
+body::-webkit-scrollbar-thumb:active {
+  background-color: var(--scrollbar-active);
 }

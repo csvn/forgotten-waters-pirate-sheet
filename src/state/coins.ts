@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { v, when } from '../store/util';
+import { clear } from './global';
 import { rollDice, reRollDice } from './room';
 
 
@@ -25,6 +26,7 @@ export const coins = createSlice({
   },
   extraReducers: builder => {
     builder
+      .addCase(clear, () => initialState)
       .addCase(rollDice, draft => when(draft.misfortune > 0, () => draft.misfortune -= 1))
       .addCase(reRollDice, draft => v(draft.reRoll -= 1));
   }

@@ -66,7 +66,8 @@ export const mainCss = css`
     display: grid;
     gap: 50px 10px;
     grid-auto-rows: minmax(1000px, calc(100vh - 105px));
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(10px, 1fr));
+    /* grid-template-columns: repeat(auto-fill, minmax(max-content, 1fr));*/
     justify-items: center;
   }
 
@@ -78,7 +79,7 @@ export const mainCss = css`
     grid-area: footer;
   }
 
-  @media (max-width: 2000px) {
+  @media (max-width: 2300px) {
     .sheets {
       grid-template-columns: 1fr;
     }

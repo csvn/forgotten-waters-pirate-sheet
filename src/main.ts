@@ -65,7 +65,7 @@ export class View extends LitElement {
       </main>
 
       <aside>
-        <p>TESTING</p>
+        <p></p>
       </aside>
 
       <footer>

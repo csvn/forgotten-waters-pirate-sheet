@@ -1,10 +1,11 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { clear } from './global';
 
 
 const initialState: SocialState = {
   nickname: 'Crikey',
   pirateName: 'Swagger McSwagger',
-  pirate: 'the-assassin-pirate',
+  pirate: 'the-alchemist-pirate',
   storyBlanks: ['Red reaver', 'Blue bolt', 'Gray Goose', 'Pink Potter', 'Teal Tarzan']
 };
 
@@ -27,9 +28,15 @@ export const social = createSlice({
     updateName(state, action: PayloadAction<string>) {
       state.pirateName = action.payload;
     },
+    updateNickname(state, action: PayloadAction<string>) {
+      state.nickname = action.payload;
+    },
     updateStoryBlank(state, action: PayloadAction<[index: number, value: string]>) {
       const [i, v] = action.payload;
       state.storyBlanks[i] = v;
     }
+  },
+  extraReducers: builder => {
+    builder.addCase(clear, () => initialState);
   }
 });

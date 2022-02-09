@@ -1,6 +1,5 @@
-import { LitElement, html, css, unsafeCSS } from 'lit';
+import { LitElement, html, css } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
-import { drawIcon } from '../images';
 import { actions, State } from '../state';
 import { StateController } from '../store/controller';
 
@@ -10,17 +9,14 @@ export class StarChart extends LitElement {
   static styles = css`
     :host {
       display: block;
-      /* cursor: url('${unsafeCSS(drawIcon)}') 0 20, pointer; */
       aspect-ratio: 1.21;
       position: relative;
-      overflow: hidden;
-      user-select: none;
-      z-index: 2;
     }
 
     button {
-      background: rgb(255 255 0 / 0.5);
-      border: 0;
+      cursor: pointer;
+      background: transparent;
+      border: dashed 4px transparent;
       border-radius: 50%;
       aspect-ratio: 1;
       position: absolute;
@@ -29,57 +25,23 @@ export class StarChart extends LitElement {
       left: calc(var(--x) * 100%);
       transform: translate(-50%, -50%);
     }
+    button:hover {
+      background: var(--hint);
+      border-color: var(--hint-active);
+    }
 
     .progress {
-      width: 3.2%;
+      width: 5.1%;
     }
 
     .event {
-      width: 5.5%;
+      width: 7.5%;
     }
   `;
 
-  #canvas = this.#createCanvas();
   #stateController = new StateController(this);
 
   @state() declare state: State;
-
-  #createCanvas() {
-    const canvas = document.createElement('canvas');
-    canvas.width = 600;
-    canvas.height = 600;
-    return canvas;
-  }
-
-  startDraw(e: MouseEvent) {
-    const canvas = this.#canvas;
-    const ctx = canvas.getContext('2d')!;
-    const doErase = e.button === 2;
-    const { x, y } = canvas.getBoundingClientRect();
-
-    const draw = (e: MouseEvent) => {
-      ctx.beginPath();
-      ctx.fillStyle = 'firebrick';
-      ctx.arc(e.x - x, e.y - y, doErase ? 9 : 5, 0, 2 * Math.PI);
-      if (doErase) {
-        ctx.save();
-        ctx.clip();
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.restore();
-      } else {
-        ctx.fill();
-      }
-    };
-    const drawStop = () => {
-      document.body.removeEventListener('mousemove', draw);
-      document.body.removeEventListener('mouseup', drawStop);
-    };
-
-    document.body.addEventListener('mousemove', draw);
-    document.body.addEventListener('mouseup', drawStop);
-
-    draw(e);
-  }
 
   #constellation() {
     const { social, ui } = this.state;
@@ -97,12 +59,9 @@ export class StarChart extends LitElement {
 
   render() {
     return html`
-      <div class="star-chart" @mousedown=${this.startDraw} @contextmenu=${(e: Event) => e.preventDefault()}>
-        ${this.#canvas}
-        ${this.#constellation().map(c => html`
-          <button class=${c.type} style="--x: ${c.x}; --y: ${c.y};"></button>
-        `)}
-      </div>
+      ${this.#constellation().map(c => html`
+        <button class=${c.type} style="--x: ${c.x}; --y: ${c.y};"></button>
+      `)}
     `;
   }
 }
