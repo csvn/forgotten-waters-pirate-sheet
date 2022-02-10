@@ -93,21 +93,12 @@ export class StarChart extends LitElement {
     return ui.pirates.find(p => p.id === social.pirate)?.constellation ?? [];
   }
 
-  connectedCallback() {
-    super.connectedCallback();
-    this.addEventListener('click', (e: MouseEvent) => {
-      const t = e.currentTarget as HTMLElement;
-      const { x, y, width, height } = t.getBoundingClientRect();
-      console.log(`"x": ${((e.clientX - x) / width).toFixed(3)}, "y": ${((e.clientY - y) / height).toFixed(3)}`);
-    });
-  }
-
   #isSelected(index: number) {
     return this.state.constellation.progress.includes(index);
   }
 
-  #toggleConstellation(index: number) {
-    this.#stateController.dispatch(actions.constellation.toggle(index));
+  #toggleConstellation(index: number, type: 'event' | 'progress') {
+    this.#stateController.dispatch(actions.constellation.toggle([index, type, !this.#isSelected(index)]));
   }
 
   render() {
@@ -116,7 +107,7 @@ export class StarChart extends LitElement {
         <button
             class=${classMap({ selected: this.#isSelected(i), pulse: this.pulse!, [c.type]: true })}
             style=${styleMap({ '--x': String(c.x), '--y': String(c.y) })}
-            @click=${() => this.#toggleConstellation(i)}></button>
+            @click=${() => this.#toggleConstellation(i, c.type)}></button>
       `)}
 
       <x-icon

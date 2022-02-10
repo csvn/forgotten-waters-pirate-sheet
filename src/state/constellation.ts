@@ -20,11 +20,12 @@ export const constellation = createSlice({
   reducers: {},
   extraReducers: builder => {
     builder.addCase(constellationToggle, (state, action) => {
-      const index = state.progress.indexOf(action.payload);
+      const [id] = action.payload;
+      const index = state.progress.indexOf(id);
       if (index >= 0) {
         state.progress.splice(index, 1);
       } else {
-        state.progress.push(action.payload);
+        state.progress.push(id);
       }
     })
   }

@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { v, when } from '../store/util';
-import { clear } from './global';
+import { clear, constellationToggle } from './global';
 import { rollDice, reRollDice } from './room';
 
 
@@ -28,6 +28,10 @@ export const coins = createSlice({
     builder
       .addCase(clear, () => initialState)
       .addCase(rollDice, draft => when(draft.misfortune > 0, () => draft.misfortune -= 1))
-      .addCase(reRollDice, draft => v(draft.reRoll -= 1));
+      .addCase(reRollDice, draft => v(draft.reRoll -= 1))
+      .addCase(constellationToggle, (state, action) => {
+        const [_, type, isAdd] = action.payload;
+        if (type === 'event') state.constellationEvent += isAdd ? 1 : -1;
+      });
   }
 });
