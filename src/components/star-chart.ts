@@ -19,7 +19,7 @@ export class StarChart extends LitElement {
     button {
       cursor: pointer;
       background-color: transparent;
-      border: dashed 4px transparent;
+      border: dashed 3px transparent;
       border-radius: 50%;
       box-sizing: border-box;
       aspect-ratio: 1;
@@ -28,6 +28,7 @@ export class StarChart extends LitElement {
       top: calc(var(--y) * 100%);
       left: calc(var(--x) * 100%);
       transform: translate(-50%, -50%);
+      transition: background-color .2s linear, border-color .2s linear;
     }
     button.selected {
       background-color: var(--hint-active);
@@ -46,11 +47,11 @@ export class StarChart extends LitElement {
     }
 
     .progress {
-      width: 5.1%;
+      width: 5.2%;
     }
 
     .event {
-      width: 7.5%;
+      width: 7.2%;
     }
 
     #help {

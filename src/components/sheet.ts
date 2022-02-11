@@ -6,7 +6,7 @@ import { when } from 'lit/directives/when.js';
 import { pirateSheet } from '../images';
 import { actions, State } from '../state';
 import { StateController } from '../store/controller';
-import { inputActionFactory } from '../util';
+import { inputActionFactory, range } from '../util';
 import './star-chart';
 import './stats';
 
@@ -36,7 +36,7 @@ export class Sheet extends LitElement {
     .sheet.background {
       object-position: top left;
     }
-    .sheet.constellations {
+    .sheet.constellation {
       object-position: top right;
     }
     .sheet.endings {
@@ -98,6 +98,16 @@ export class Sheet extends LitElement {
       font-size: calc(var(--base-height, 1) * 24px);
       border-width: 5px;
     }
+
+    .exclamation {
+      color: var(--hint-active);
+      position: absolute;
+      top: calc(18.25% + var(--y) * 13%);
+      left: 7.5%;
+      width: 3.5%;
+      height: 3.5%;
+      z-index: 2;
+    }
   `;
 
   #stateController = new StateController(this);
@@ -143,6 +153,10 @@ export class Sheet extends LitElement {
             <input type="text" name="blank${i}" placeholder="Story blank ${i + 1}" .value=${v} @input=${this.#inputAction(value => actions.social.updateStoryBlank([i, value]))}>
           `)}
         </div>
+      `)}
+
+      ${when(this.type === 'constellation', () => html`
+        ${range(0).map(i => html`<x-icon class="exclamation" style="--y: ${i}">exclamation</x-icon>`)}
       `)}
 
       <img class="sheet ${classMap({ [this.type]: true })}" src=${this.sheetUrl()}>

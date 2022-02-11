@@ -1,6 +1,7 @@
-import type { AnyAction, Middleware } from '@reduxjs/toolkit';
+import type { AnyAction } from '@reduxjs/toolkit';
 import { delay, event } from '../../util';
 import { coins } from '../../state/coins';
+import { skills } from '../../state/skills';
 import { constellationToggle } from '../../state/global';
 import coinClink from '../../assets/sounds/coin-clink.mp3';
 import penScratch from '../../assets/sounds/pen-scratch.mp3';
@@ -17,7 +18,7 @@ async function playSound(url: string, volume = 0.2) {
   await delay(audio.duration * 1000);
 }
 
-async function soundReducer(action: AnyAction) {
+export async function appSoundEffects(action: AnyAction) {
   if (constellationToggle.match(action) && action.payload[2]) {
     await playSound(penScratch);
     if (action.payload[1] === 'event') await playSound(coinClink);
@@ -25,9 +26,7 @@ async function soundReducer(action: AnyAction) {
   if (coins.actions.increment.match(action)) {
     await playSound(coinClink);
   }
-}
-
-export const playSoundsMiddleware: Middleware = _store => next => (action: AnyAction) => {
-  soundReducer(action);
-  return next(action);
+  if (skills.actions.update.match(action)) {
+    await playSound(penScratch);
+  }
 };

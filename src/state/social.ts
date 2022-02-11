@@ -3,10 +3,10 @@ import { clear } from './global';
 
 
 const initialState: SocialState = {
-  nickname: 'Crikey',
-  pirateName: 'Swagger McSwagger',
-  pirate: 'the-alchemist-pirate',
-  storyBlanks: ['Red reaver', 'Blue bolt', 'Gray Goose', 'Pink Potter', 'Teal Tarzan']
+  nickname: '',
+  pirateName: '',
+  pirate: undefined,
+  storyBlanks: ['', '', '', '', '']
 };
 
 export type StoryBlanks = [first: string, second: string, third: string, fourth: string, fifth: string];

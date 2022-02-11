@@ -3,7 +3,7 @@ import { customElement, state } from 'lit/decorators.js';
 import { generalCss } from '../main-css';
 import { StateController } from '../store/controller';
 import { actions, State } from '../state';
-import { inputActionFactory } from '../util';
+import { inputActionFactory, range } from '../util';
 
 
 @customElement('x-controls')
@@ -69,6 +69,17 @@ export class View extends LitElement {
         </select>
       </label>
       ${this.#constellationSize() > 0 ? html`<p style="margin: 0;"><small>Constellation size: ${this.#constellationSize()}</small></p>` : ''}
+      ${range(5).map(i => html`
+        <label>
+          Story blank ${i + 1}:
+          <input
+              type="text"
+              name="blank${i}"
+              placeholder="Story blank ${i + 1}"
+              .value=${this.#social.storyBlanks[i]}
+              @input=${this.#inputAction(value => actions.social.updateStoryBlank([i, value]))}>
+        </label>
+      `)}
       <hr style="width: 90%">
       <label>
         Font:

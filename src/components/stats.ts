@@ -1,7 +1,8 @@
-import { LitElement, html, css } from 'lit';
+import { LitElement, html, css, unsafeCSS } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { repeat } from 'lit/directives/repeat.js';
+import { svgIcons } from '../images';
 import { actions, SkillsState, State } from '../state';
 import { StateController } from '../store/controller';
 import { keys, range } from '../util';
@@ -24,15 +25,26 @@ export class Stats extends LitElement {
       background-color: transparent;
       border: dashed 1px var(--hint);
       padding: 0;
-      transition: all .2s;
+      transition: background-color .2s linear;
     }
     .stat-value:hover {
-      background-color: transparent;
-      border-width: 2px;
+      background-color: var(--hint);
       border-color: var(--hint-active);
     }
     .stat-value.active {
-      background-color: var(--hint);
+      background-color: var(--hint-active);
+      mask-image: url('${unsafeCSS(svgIcons + '#cross-mask')}');
+      -webkit-mask-image: url('${unsafeCSS(svgIcons + '#cross-mask')}');
+      animation: grow 0.4s cubic-bezier(.71,.51,.58,2.4);
+    }
+
+    @keyframes grow {
+      0% {
+        transform: scale(0);
+      }
+      100% {
+        transform: scale(1);
+      }
     }
   `;
 

@@ -35,7 +35,7 @@ export class View extends LitElement {
       <main class="sheets">
         <x-sheet type="cover"></x-sheet>
         <x-sheet type="background"></x-sheet>
-        <x-sheet type="constellations"></x-sheet>
+        <x-sheet type="constellation"></x-sheet>
         <x-sheet type="endings"></x-sheet>
       </main>
 
