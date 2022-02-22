@@ -47,10 +47,6 @@ export class View extends LitElement {
     return this.state.social;
   }
 
-  #changeFont(e: Event) {
-    document.documentElement.style.setProperty('--font-family', (e.currentTarget as HTMLSelectElement).value);
-  }
-
   #selectPirate(event: Event) {
     const select = event.currentTarget as HTMLSelectElement;
     this.#stateController.dispatch(actions.social.selectPirate(select.value));
@@ -92,8 +88,18 @@ export class View extends LitElement {
     this.#stateController.dispatch(actions.settings.selectTheme(value === this.#defaultThemeValue ? undefined : value));
   }
 
+  #selectFont(event: Event) {
+    const value = (event.currentTarget as HTMLSelectElement).value;
+    this.#stateController.dispatch(actions.settings.selectFont(value));
+  }
+
   #toggleSounds() {
     this.#stateController.dispatch(actions.settings.toggleSounds());
+  }
+
+  #adjustVolume(event: Event) {
+    const value = Number((event.currentTarget as HTMLInputElement).value);
+    this.#stateController.dispatch(actions.settings.adjustVolume(value));
   }
 
   render() {
@@ -139,15 +145,18 @@ export class View extends LitElement {
         </select>
 
         <label for="font">Font</label>
-        <select id="font" name="font" @change=${this.#changeFont}>
-          <option value="Mansalva" selected>Mansalva</option>
+        <select id="font" name="font" .value=${live(this.state.settings.font ?? 'Mansalva')} @change=${this.#selectFont}>
+          <option value="Mansalva">Mansalva</option>
           <option value="Caveat">Caveat</option>
           <option value="JustMeAgainDownHere">Just Me Again Down Here</option>
           <option value="Verdana">Verdana</option>
         </select>
 
+        <label for="sound-volume">Sound volume (0-1)</label>
+        <input id="sound-volume" name="sound-volume" type="number" min="0" max="1" step="0.02" .value=${this.state.settings.soundVolume} @input=${this.#adjustVolume}>
+
         <label for="sounds">Sounds enabled</label>
-        <input id="sounds" name="sounds" type="checkbox" .checked=${this.state.settings.shouldPlaySounds} @change=${this.#toggleSounds}>
+        <input id="sounds" name="sounds" type="checkbox" .checked=${this.state.settings.shouldPlaySounds} @change=${this.#toggleSounds}><br>
       </x-form-section>
 
       <hr style="width: 90%">

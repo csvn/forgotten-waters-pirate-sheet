@@ -11,18 +11,21 @@ import bell from '../../assets/sounds/bell.mp3';
 // import pageTurn3 from '../../assets/sounds/page-turn-3.mp3';
 
 
-async function playSound(...urls: string[]) {
-  const url = urls[Math.floor(Math.random() * urls.length)];
-  const audio = new Audio(url);
-  audio.volume = 0.2;
-  await event(audio, 'canplay');
-  await audio.play();
-  await delay(audio.duration * 1000);
+function playSoundFactory(state: State) {
+  return async (...urls: string[]) => {
+    const url = urls[Math.floor(Math.random() * urls.length)];
+    const audio = new Audio(url);
+    audio.volume = state.settings.soundVolume;
+    await event(audio, 'canplay');
+    await audio.play();
+    await delay(audio.duration * 1000);
+  }
 }
 
 export async function appSoundEffects(action: AnyAction, state: State) {
   if (!state.settings.shouldPlaySounds) return;
 
+  const playSound = playSoundFactory(state);
   const playCoins = () => playSound(coinClink, coinClink2);
   const { constellation } = state;
 

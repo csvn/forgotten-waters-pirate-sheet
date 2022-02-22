@@ -4,12 +4,16 @@ import { clear } from './global';
 
 const initialState: SettingsState = {
   theme: undefined,
-  shouldPlaySounds: true
+  font: undefined,
+  shouldPlaySounds: true,
+  soundVolume: 0.2
 };
 
 export interface SettingsState {
   theme: string | undefined;
+  font: string | undefined;
   shouldPlaySounds: boolean;
+  soundVolume: number;
 }
 
 export const settings = createSlice({
@@ -19,8 +23,14 @@ export const settings = createSlice({
     selectTheme(state, action: PayloadAction<string | undefined>) {
       state.theme = action.payload;
     },
+    selectFont(state, action: PayloadAction<string | undefined>) {
+      state.font = action.payload;
+    },
     toggleSounds(state) {
       state.shouldPlaySounds = !state.shouldPlaySounds;
+    },
+    adjustVolume(state, action: PayloadAction<number>) {
+      state.soundVolume = action.payload;
     }
   },
   extraReducers: builder => {

@@ -20,5 +20,11 @@ export function updateThemeFactory() {
       if (link.href !== url) link.href = url;
       if (link.parentNode === null) linkSibling.insertAdjacentElement('afterend', link);
     }
+
+    const f = state.settings.font;
+    const docStyle = document.documentElement.style;
+    if (f !== undefined && f !== docStyle.getPropertyValue('--font-family')) {
+      docStyle.setProperty('--font-family', f);
+    }
   };
 };
