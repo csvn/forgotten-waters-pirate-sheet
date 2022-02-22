@@ -1,19 +1,19 @@
 @font-face {
   font-family: Caveat;
   font-weight: 400;
-  src: url('./Caveat-Regular.woff2');
+  src: url('./assets/fonts/Caveat-Regular.woff2');
 }
 
 @font-face {
   font-family: JustMeAgainDownHere;
   font-weight: 400;
-  src: url('./JustMeAgainDownHere-Regular.woff2');
+  src: url('./assets/fonts/JustMeAgainDownHere-Regular.woff2');
 }
 
 @font-face {
   font-family: Mansalva;
   font-weight: 400;
-  src: url('./Mansalva-Regular.woff2');
+  src: url('./assets/fonts/Mansalva-Regular.woff2');
 }
 
 
@@ -21,20 +21,55 @@
   --font-family: Mansalva;
   /* Colors */
   --on-bg: rgb(255 255 255 / 90%);
-  --bg: #222;
-  --bg-alt: #353535;
+  --bg: rgb(30 30 30);
+  --bg-alt: rgb(40 40 40);
   --on-primary: rgb(255 255 255 / 90%);
-  --primary: #17368d;
-  --primary-alt: #37469d;
+  --primary: rgb(23 54 141);
+  --primary-alt: rgb(55 70 157);
+  --inactive: rgb(255 255 255 / 50%);
   --hint: rgb(237 177 40 / 40%);
   --hint-active: rgb(237 177 40 / 85%);
+  --border: rgb(110 110 110);
+  --input: rgb(27 27 27);
+  --input-active: rgb(50 50 50);
+  --on-input: rgb(255 255 255 / 90%);
+  --scrollbar: rgb(70 80 110);
+  --scrollbar-active: rgb(11 39 117);
+
+  /* Measuerements */
+  --paper-ratio: 1.455;
+
+  /* Transforms */
+  --sheet-filter: hue-rotate(195deg) invert(0.9);
+
+  /* Z-index */
+  --z-default: 2;
+  --z-header: 3;
 
   color: var(--on-bg);
   background-color: var(--bg);
-  font-size: 24px;
+  font-size: 22px;
   font-family: var(--font-family), sans-serif;
 }
 
 body {
   margin: 0;
+}
+
+body::-webkit-scrollbar {
+  width: 0.6rem;
+  height: 0.6rem;
+}
+
+body::-webkit-scrollbar-track,
+body::-webkit-scrollbar-corner {
+  background-color: transparent;
+}
+
+body::-webkit-scrollbar-thumb {
+  background-color: var(--scrollbar);
+  border-radius: 0.3rem;
+}
+body::-webkit-scrollbar-thumb:active {
+  background-color: var(--scrollbar-active);
 }
