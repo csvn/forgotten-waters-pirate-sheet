@@ -42,20 +42,22 @@ export class Coin extends LitElement {
       width: var(--size);
       height: var(--size);
       user-select: none;
-      filter: brightness(1.25);
+      filter: var(--filter);
       transform: rotate(var(--image-rotation));
     }
     .coin.reRoll {
       --image-rotation: 100deg;
+      --filter: var(--coin-re-roll-filter);
       background-image: url('${unsafeCSS(coin.reRoll)}');
     }
     .coin.misfortune {
       --image-rotation: 35deg;
+      --filter: var(--coin-misfortune-filter);
       background-image: url('${unsafeCSS(coin.misfortune)}');
-      filter: brightness(1.6);
     }
     .coin.constellationEvent {
       --image-rotation: 45deg;
+      --filter: var(--coin-constellation-event-filter);
       background-image: url('${unsafeCSS(coin.constellationEvent)}');
     }
   `];

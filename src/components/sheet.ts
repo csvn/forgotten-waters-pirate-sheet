@@ -95,6 +95,9 @@ export class Sheet extends LitElement {
       border-color: var(--hint-active);
       outline: 0;
     }
+    .inputs.cover input {
+      text-align: center;
+    }
     .inputs.background input {
       font-size: calc(var(--base-height, 1) * 24px);
       border-width: 5px;

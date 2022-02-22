@@ -41,6 +41,9 @@
 
   /* Transforms */
   --sheet-filter: hue-rotate(195deg) invert(0.9);
+  --coin-re-roll-filter: brightness(1.25);
+  --coin-misfortune-filter: brightness(1.6);
+  --coin-constellation-event-filter: brightness(1.25);
 
   /* Z-index */
   --z-default: 2;
