@@ -42,6 +42,10 @@
   /* Transforms */
   --sheet-filter: hue-rotate(195deg) invert(0.9);
 
+  /* Z-index */
+  --z-default: 2;
+  --z-header: 3;
+
   color: var(--on-bg);
   background-color: var(--bg);
   font-size: 22px;

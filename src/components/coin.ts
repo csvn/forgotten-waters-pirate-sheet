@@ -1,6 +1,5 @@
 import { LitElement, html, css, unsafeCSS } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
-import { classMap } from 'lit/directives/class-map.js';
 import { when } from 'lit/directives/when.js';
 import { coin } from '../images';
 import { generalCss } from '../main-css';
@@ -36,7 +35,7 @@ export class Coin extends LitElement {
     }
 
     .coin {
-      --size: 35px;
+      --size: 45px;
       background-position: center;
       background-size: 120%;
       border-radius: 50%;
@@ -44,22 +43,25 @@ export class Coin extends LitElement {
       height: var(--size);
       user-select: none;
       filter: brightness(1.25);
+      transform: rotate(var(--image-rotation));
     }
     .coin.reRoll {
+      --image-rotation: 100deg;
       background-image: url('${unsafeCSS(coin.reRoll)}');
     }
     .coin.misfortune {
+      --image-rotation: 35deg;
       background-image: url('${unsafeCSS(coin.misfortune)}');
       filter: brightness(1.6);
-      transform: rotate(30deg);
     }
     .coin.constellationEvent {
+      --image-rotation: 45deg;
       background-image: url('${unsafeCSS(coin.constellationEvent)}');
-      transform: rotate(45deg);
     }
   `];
 
   #stateController = new StateController(this);
+  #previousCoinValue?: number;
 
   @state() declare state: State;
   @property() declare type: keyof CoinsState | 'constellationEvent';
@@ -90,9 +92,27 @@ export class Coin extends LitElement {
     this.#stateController.dispatch(actions.dice.decrement(this.type as keyof CoinsState));
   }
 
+  updated() {
+    const prev = this.#previousCoinValue;
+
+    if (prev !== undefined && prev !== this.#coinValue) {
+      const coin = this.shadowRoot?.querySelector<HTMLElement>('.coin')!;
+      const rotation = Number(getComputedStyle(coin).getPropertyValue('--image-rotation').replace(/deg$/, ''));
+      const x = Math.sin((rotation * Math.PI) / 180);
+      const y = Math.cos((rotation * Math.PI) / 180);
+      coin.animate([
+        { transform: `rotate(${rotation}deg)` },
+        { transform: `rotate(${rotation}deg) rotate3d(${x}, ${y}, 0, 180deg) scale(1.55)`, offset: .5 },
+        { transform: `rotate(${rotation}deg) rotate3d(${x}, ${y}, 0, 360deg)`, offset: 1 }
+      ], { duration: 400 });
+    }
+
+    if (this.state?._persist.rehydrated) this.#previousCoinValue = this.#coinValue;
+  }
+
   render() {
     return html`
-      <div class=${classMap({ coin: true, [this.type]: true })}></div>
+      <div class="coin ${this.type}"></div>
       x${this.#coinValue}
       ${when(this.type !== 'constellationEvent', () => html`
         <div class="buttons">

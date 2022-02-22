@@ -66,6 +66,9 @@ export const mainCss = css`
     align-items: center;
     gap: 20px;
     padding: 5px 25px;
+    position: sticky;
+    top: 0;
+    z-index: var(--z-header);
   }
 
   header h1 {

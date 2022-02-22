@@ -38,7 +38,7 @@ export interface State {
   social: SocialState;
   settings: SettingsState;
   ui: UIState;
-  _persist: unknown;
+  _persist: { version: number, rehydrated: boolean };
 }
 
 export type { DiceState as CoinsState, ConstellationEvents, ConstellationState, DataState, SkillsState, StoryBlanks, SocialState, SettingsState, UIState };

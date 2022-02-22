@@ -49,7 +49,7 @@ export class Sheet extends LitElement {
       top: 75.4%;
       left: 14.9%;
       width: 69.3%;
-      z-index: 2;
+      z-index: var(--z-default);
     }
 
     .star-chart {
@@ -57,7 +57,7 @@ export class Sheet extends LitElement {
       top: 17.5%;
       left: 17%;
       width: 64%;
-      z-index: 2;
+      z-index: var(--z-default);
     }
 
     .inputs {
@@ -65,7 +65,7 @@ export class Sheet extends LitElement {
       flex-direction: column;
       position: absolute;
       gap: 2%;
-      z-index: 2;
+      z-index: var(--z-default);
     }
 
     .inputs.cover {
@@ -138,7 +138,7 @@ export class Sheet extends LitElement {
       top: var(--y);
       left: 7.2%;
       width: 4.2%;
-      z-index: 2;
+      z-index: var(--z-default);
     }
 
     .ending {
@@ -148,7 +148,7 @@ export class Sheet extends LitElement {
       top: calc(10.35% + var(--y));
       width: 16.9%;
       height: 2.34%;
-      z-index: 2;
+      z-index: var(--z-default);
     }
     .bad {
       left: calc(42.4% + var(--x));
@@ -158,6 +158,15 @@ export class Sheet extends LitElement {
     }
     .legendary {
       left: calc(32.3% + var(--x));
+    }
+
+    #ending-help {
+      cursor: help;
+      color: var(--hint-active);
+      position: absolute;
+      left: 7.5%;
+      top: 9%;
+      z-index: var(--z-default);
     }
 
     @keyframes pulse {
@@ -265,6 +274,12 @@ export class Sheet extends LitElement {
             @click=${() => this.#toggleConstellationEvent(i)}>
           <x-icon>exclamation</x-icon>
         </button>
+
+        <x-icon
+            id="ending-help"
+            title="Constellation events can be clicked below when you have constellation event coins available (received from constellation map on the cover page)">
+          questionmark
+        </x-icon>
       `))}
 
       ${when(this.type === 'endings', () => html`
