@@ -5,6 +5,7 @@ import coinClink from '../../assets/sounds/coin-clink.mp3';
 import coinClink2 from '../../assets/sounds/coin-clink-2.mp3';
 import coinUse from '../../assets/sounds/coin-use.mp3';
 import penScratch from '../../assets/sounds/pen-scratch.mp3';
+import bell from '../../assets/sounds/bell.mp3';
 // import pageTurn1 from '../../assets/sounds/page-turn.mp3';
 // import pageTurn2 from '../../assets/sounds/page-turn-2.mp3';
 // import pageTurn3 from '../../assets/sounds/page-turn-3.mp3';
@@ -46,5 +47,10 @@ export async function appSoundEffects(action: AnyAction, state: State) {
 
   if (actions.skills.update.match(action)) {
     await playSound(penScratch);
+  }
+
+  // Import
+  if (action.type === 'persist/REHYDRATE' && action.import) {
+    await playSound(bell);
   }
 };
