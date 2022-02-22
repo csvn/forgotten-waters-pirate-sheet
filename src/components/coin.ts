@@ -6,6 +6,7 @@ import { coin } from '../images';
 import { generalCss } from '../main-css';
 import { actions, CoinsState, State } from '../state';
 import { StateController } from '../store/controller';
+import { throws } from '../util';
 
 
 @customElement('x-coin')
@@ -14,13 +15,24 @@ export class Coin extends LitElement {
     :host {
       display: flex;
       gap: 8px;
-      font-size: 1.3em;
+      font-size: 1.8em;
       align-items: center;
-      margin: 0 4px;
+      margin: 0 8px;
+    }
+
+    .buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      padding: 5px;
     }
 
     button {
-      font-size: .7rem;
+      display: block;
+      aspect-ratio: 1;
+      font-size: 1rem;
+      line-height: 1.4;
+      padding: 0 .3em;
     }
 
     .coin {
@@ -50,19 +62,44 @@ export class Coin extends LitElement {
   #stateController = new StateController(this);
 
   @state() declare state: State;
-  @property() declare type: keyof CoinsState;
+  @property() declare type: keyof CoinsState | 'constellationEvent';
 
-  increment() {
-    this.#stateController.dispatch(actions.coins.increment(this.type));
+  get #coinValue() {
+    const { dice, constellation: { events, chartEvents } } = this.state;
+    if (this.type === 'constellationEvent') return chartEvents.length - events.filter(v => v).length;
+    return dice[this.type];
+  }
+  get #coinTypeLabel() {
+    return this.type === 'reRoll' ? 'Re-Roll' :
+      this.type === 'misfortune' ? 'Misfortune' :
+      this.type === 'constellationEvent' ? 'Constellation-Event' :
+      throws(new Error(`Invalid type "${this.type}"`));
+  }
+  get #incrementTitle() {
+    return `Increment ${this.#coinTypeLabel} coin`;
+  }
+  get #decrementTitle() {
+    return `Decrement ${this.#coinTypeLabel} coin`;
+  }
+
+  #increment() {
+    this.#stateController.dispatch(actions.dice.increment(this.type as keyof CoinsState));
+  }
+
+  #decrement() {
+    this.#stateController.dispatch(actions.dice.decrement(this.type as keyof CoinsState));
   }
 
   render() {
     return html`
-      ${when(this.type !== 'constellationEvent', () => html`
-        <button @click=${this.increment}>+</button>
-      `)}
-      ${this.state.coins[this.type]}x
       <div class=${classMap({ coin: true, [this.type]: true })}></div>
+      x${this.#coinValue}
+      ${when(this.type !== 'constellationEvent', () => html`
+        <div class="buttons">
+          <button aria-label=${this.#incrementTitle} title=${this.#incrementTitle} @click=${this.#increment}>+</button>
+          <button aria-label=${this.#decrementTitle} title=${this.#decrementTitle} @click=${this.#decrement}>-</button>
+        </div>
+      `)}
     `;
   }
 }

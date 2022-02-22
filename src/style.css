@@ -21,13 +21,18 @@
   --font-family: Mansalva;
   /* Colors */
   --on-bg: rgb(255 255 255 / 90%);
-  --bg: rgb(34 34 34);
-  --bg-alt: rgb(53 53 53);
+  --bg: rgb(30 30 30);
+  --bg-alt: rgb(40 40 40);
   --on-primary: rgb(255 255 255 / 90%);
   --primary: rgb(23 54 141);
   --primary-alt: rgb(55 70 157);
+  --inactive: rgb(255 255 255 / 50%);
   --hint: rgb(237 177 40 / 40%);
   --hint-active: rgb(237 177 40 / 85%);
+  --border: rgb(110 110 110);
+  --input: rgb(27 27 27);
+  --input-active: rgb(50 50 50);
+  --on-input: rgb(255 255 255 / 90%);
   --scrollbar: rgb(70 80 110);
   --scrollbar-active: rgb(11 39 117);
 
@@ -49,9 +54,11 @@ body {
 
 body::-webkit-scrollbar {
   width: 0.6rem;
+  height: 0.6rem;
 }
 
-body::-webkit-scrollbar-track {
+body::-webkit-scrollbar-track,
+body::-webkit-scrollbar-corner {
   background-color: transparent;
 }
 

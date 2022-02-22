@@ -12,7 +12,7 @@ export class StarChart extends LitElement {
   static styles = css`
     :host {
       display: block;
-      aspect-ratio: 1.21;
+      aspect-ratio: 1.204;
       position: relative;
     }
 
@@ -89,26 +89,34 @@ export class StarChart extends LitElement {
   @state() declare pulse?: boolean;
   @state() declare state: State;
 
-  #constellation() {
-    const { social, ui } = this.state;
-    return ui.pirates.find(p => p.id === social.pirate)?.constellation ?? [];
+  #chart(type: 'chartEvents' | 'chartProgress') {
+    const { social, data, constellation } = this.state;
+    const list = data.pirates.find(p => p.id === social.pirate)?.positions[type] ?? [];
+    const selected = type === 'chartEvents' ? constellation.chartEvents : constellation.chartProgress;
+    const actionCreator = actions.constellation[type === 'chartEvents' ? 'toggleChartEvent' : 'toggleChartProgress'];
+    return list.map((point, id) => ({
+      ...point,
+      type: type === 'chartEvents' ? 'event' : 'progress',
+      selected: selected.includes(id),
+      toggle: () => this.#stateController.dispatch(actionCreator(id))
+    }));
   }
 
-  #isSelected(index: number) {
-    return this.state.constellation.progress.includes(index);
+  #events() {
+    return this.#chart('chartEvents');
   }
 
-  #toggleConstellation(index: number, type: 'event' | 'progress') {
-    this.#stateController.dispatch(actions.constellation.toggle([index, type, !this.#isSelected(index)]));
+  #progress() {
+    return this.#chart('chartProgress');
   }
 
   render() {
     return html`
-      ${this.#constellation().map((c, i) => html`
+      ${[...this.#progress(), ...this.#events()].map(c => html`
         <button
-            class=${classMap({ selected: this.#isSelected(i), pulse: this.pulse!, [c.type]: true })}
+            class=${classMap({ selected: c.selected, pulse: this.pulse!, [c.type]: true })}
             style=${styleMap({ '--x': String(c.x), '--y': String(c.y) })}
-            @click=${() => this.#toggleConstellation(i, c.type)}></button>
+            @click=${c.toggle}></button>
       `)}
 
       <x-icon

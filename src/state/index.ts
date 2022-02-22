@@ -1,35 +1,44 @@
 import { combineReducers } from '@reduxjs/toolkit';
-import { coins, type CoinsState } from './coins';
+import { dice, type DiceState } from './dice';
 import { constellation, type ConstellationEvents, type ConstellationState } from './constellation';
-import { clear, constellationToggle } from './global';
+import { clear, exportData, importData } from './global';
 import { skills, type SkillsState } from './skills';
 import { social, type StoryBlanks, type SocialState } from './social';
+import { data, type DataState } from './data';
+import { settings, type SettingsState } from './settings';
 import { ui, type UIState } from './ui';
 
 
 export const rootReducer = combineReducers({
-  coins: coins.reducer,
   constellation: constellation.reducer,
+  data: data.reducer,
+  dice: dice.reducer,
   skills: skills.reducer,
   social: social.reducer,
+  settings: settings.reducer,
   ui: ui.reducer
 });
 
 export const actions = {
-  coins: coins.actions,
-  constellation: { ...constellation.actions, toggle: constellationToggle },
-  global: { clear },
+  constellation: constellation.actions,
+  data: data.actions,
+  dice: dice.actions,
+  global: { clear, exportData, importData },
   skills: skills.actions,
   social: social.actions,
+  settings: settings.actions,
   ui: ui.actions
 };
 
 export interface State {
-  coins: CoinsState;
   constellation: ConstellationState;
+  data: DataState;
+  dice: DiceState;
   skills: SkillsState;
   social: SocialState;
+  settings: SettingsState;
   ui: UIState;
+  _persist: unknown;
 }
 
-export type { CoinsState, ConstellationEvents, ConstellationState, SkillsState, StoryBlanks, SocialState };
+export type { DiceState as CoinsState, ConstellationEvents, ConstellationState, DataState, SkillsState, StoryBlanks, SocialState, SettingsState, UIState };

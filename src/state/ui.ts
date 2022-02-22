@@ -1,32 +1,34 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { v } from '../store/util';
+import { createSlice } from '@reduxjs/toolkit';
+import { clear } from './global';
 
-
-export const fetchPirates = createAsyncThunk<Pirate[]>('ui/fetchPirates', async() => {
-  const pirates = await import('../pirates.json');
-  return pirates.default;
-});
 
 const initialState: UIState = {
-  pirates: []
+  isPirateOpen: true,
+  isStoryBlanksOpen: false,
+  isSettingsOpen: false
 };
 
-export interface Pirate {
-  id: string;
-  name: string;
-  constellation: { x: number, y: number, type: 'event' | 'progress' }[];
-}
-
 export interface UIState {
-  pirates: Pirate[];
+  isPirateOpen: boolean;
+  isStoryBlanksOpen: boolean;
+  isSettingsOpen: boolean;
 }
 
 export const ui = createSlice({
   name: 'ui',
   initialState,
-  reducers: {},
+  reducers: {
+    togglePirate(state) {
+      state.isPirateOpen = !state.isPirateOpen;
+    },
+    toggleStoryBlanks(state) {
+      state.isStoryBlanksOpen = !state.isStoryBlanksOpen;
+    },
+    toggleSettings(state) {
+      state.isSettingsOpen = !state.isSettingsOpen;
+    }
+  },
   extraReducers: builder => {
-    builder
-      .addCase(fetchPirates.fulfilled, (state, action) => v(state.pirates.push(...action.payload)));
+    builder.addCase(clear, () => initialState);
   }
-})
+});

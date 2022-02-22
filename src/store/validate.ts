@@ -11,7 +11,8 @@ type Validator<T> = {
   [P in keyof T]:
     T[P] extends object ? Validator<T[P]> :
     T[P] extends (infer D)[] ? Validator<D> :
-    T[P] extends Primitive ? ValidationType<T[P]> : never;
+    T[P] extends Primitive ? ValidationType<T[P]> :
+    T[P] extends unknown ? 'unknown' : never;
 };
 type Entries<T> = [keyof T, T[keyof T]][];
 
@@ -22,10 +23,17 @@ const stateSchema: Validator<State> = {
     pirateName: 'string',
     storyBlanks: ['string', 'string', 'string', 'string', 'string']
   },
-  coins: {
+  constellation: {
+    events: ['boolean', 'boolean', 'boolean', 'boolean', 'boolean'],
+    chartEvents: [],
+    chartProgress: []
+  },
+  data: {
+    pirates: []
+  },
+  dice: {
     misfortune: 'number',
-    reRoll: 'number',
-    constellationEvent: 'number',
+    reRoll: 'number'
   },
   skills: {
     aim: 'number',
@@ -35,10 +43,15 @@ const stateSchema: Validator<State> = {
     navigation: 'number',
     exploration: 'number'
   },
-  constellation: {
-    events: ['boolean', 'boolean', 'boolean', 'boolean', 'boolean'],
-    progress: []
-  }
+  settings: {
+    shouldPlaySounds: 'boolean'
+  },
+  ui: {
+    isPirateOpen: 'boolean',
+    isSettingsOpen: 'boolean',
+    isStoryBlanksOpen: 'boolean'
+  },
+  _persist: 'unknown'
 };
 
 export function validateState(state: State) {

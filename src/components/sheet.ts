@@ -2,6 +2,7 @@ import { ResizeController } from '@lit-labs/observers/resize_controller.js';
 import { LitElement, html, css, nothing } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
+import { styleMap } from 'lit/directives/style-map.js';
 import { when } from 'lit/directives/when.js';
 import { pirateSheet } from '../images';
 import { actions, State } from '../state';
@@ -69,8 +70,8 @@ export class Sheet extends LitElement {
 
     .inputs.cover {
       top: 11%;
-      left: 12%;
-      width: 74.2%;
+      left: 11.2%;
+      width: 75.2%;
       height: 6.5%;
     }
     .inputs.background {
@@ -100,13 +101,87 @@ export class Sheet extends LitElement {
     }
 
     .exclamation {
+      aspect-ratio: 1;
+      background-color: transparent;
+      border: 0;
+      border-radius: 50%;
+      padding: 0;
+    }
+
+    .exclamation:not([disabled]) {
+      cursor: pointer;
+    }
+    .exclamation:not([disabled]):hover {
+      background-color: var(--hint);
+    }
+    .exclamation:not([disabled]):not(.active) {
+      --to: var(--hint);
+      animation: pulseBg 2s linear infinite;
+    }
+
+    .exclamation x-icon {
+      color: transparent;
+      width: 100%;
+      height: 100%;
+    }
+    .exclamation.active x-icon {
       color: var(--hint-active);
+    }
+    .exclamation:not([disabled]):not(.active) x-icon {
+      --to: var(--hint-active);
+      animation: pulse 2s linear infinite;
+    }
+
+    .exclamation.constellation-event {
       position: absolute;
-      top: calc(18.25% + var(--y) * 13%);
-      left: 7.5%;
-      width: 3.5%;
-      height: 3.5%;
+      padding: 3px;
+      top: var(--y);
+      left: 7.2%;
+      width: 4.2%;
       z-index: 2;
+    }
+
+    .ending {
+      display: grid;
+      grid: 1fr / repeat(5, 1fr);
+      position: absolute;
+      top: calc(10.35% + var(--y));
+      width: 16.9%;
+      height: 2.34%;
+      z-index: 2;
+    }
+    .bad {
+      left: calc(42.4% + var(--x));
+    }
+    .good {
+      left: calc(38.5% + var(--x));
+    }
+    .legendary {
+      left: calc(32.3% + var(--x));
+    }
+
+    @keyframes pulse {
+      0% {
+        color: transparent;
+      }
+      40%, 60% {
+        color: var(--to);
+      }
+      100% {
+        color: transparent;
+      }
+    }
+
+    @keyframes pulseBg {
+      0% {
+        background-color: transparent;
+      }
+      40%, 60% {
+        background-color: var(--to);
+      }
+      100% {
+        background-color: transparent;
+      }
     }
   `;
 
@@ -127,8 +202,35 @@ export class Sheet extends LitElement {
     return this.state.social;
   }
 
-  sheetUrl() {
+  #sheetUrl() {
     return pirateSheet(this.pirate!, this.type === 'cover' || this.type === 'endings' ? 1 : 2);
+  }
+
+  #constellationEventCount() {
+    return this.state.constellation.events.reduce((sum, active) => sum + (active ? 1 : 0), 0);
+  }
+
+  #canSelectConstellationEvent(i: number) {
+    const { constellation: { events, chartEvents } } = this.state;
+    return chartEvents.length > i &&
+      (events[i] && !(events[i + 1] ?? false) ||
+      !events[i] && (events[i - 1] ?? true));
+  }
+
+  #toggleConstellationEvent(i: number) {
+    this.#stateController.dispatch(actions.constellation.toggleEvent(i));
+  }
+
+  #constellationEventPosition(i: number) {
+    const { social: { pirate }, data: { pirates } } = this.state;
+    const top = pirates.find(p => p.id === pirate)?.positions.constellationEvents[i] ?? i * 10;
+    return `${top}%`;
+  }
+
+  #endingsPositions(type: 'bad' | 'good' | 'legendary') {
+    const { social: { pirate }, data: { pirates } } = this.state;
+    const { x = 0, y = 0 } = pirates.find(p => p.id === pirate)?.positions.endings[type] ?? {};
+    return { '--x': `${x}%`, '--y': `${y}%` };
   }
 
   updated() {
@@ -155,11 +257,47 @@ export class Sheet extends LitElement {
         </div>
       `)}
 
-      ${when(this.type === 'constellation', () => html`
-        ${range(0).map(i => html`<x-icon class="exclamation" style="--y: ${i}">exclamation</x-icon>`)}
+      ${when(this.type === 'constellation', () => this.state.constellation.events.map((active, i) => html`
+        <button
+            class="exclamation constellation-event ${classMap({ active })}"
+            style="--y: ${this.#constellationEventPosition(i)}"
+            .disabled=${!this.#canSelectConstellationEvent(i)}
+            @click=${() => this.#toggleConstellationEvent(i)}>
+          <x-icon>exclamation</x-icon>
+        </button>
+      `))}
+
+      ${when(this.type === 'endings', () => html`
+        <div class="ending bad" style=${styleMap(this.#endingsPositions('bad'))}>
+          ${range(3).map(i => html`
+            <button
+                class="exclamation ${classMap({ active: this.#constellationEventCount() > i })}"
+                .disabled=${true}>
+              <x-icon>exclamation</x-icon>
+            </button>
+          `)}
+        </div>
+        <div class="ending good" style=${styleMap(this.#endingsPositions('good'))}>
+          ${range(4).map(i => html`
+            <button
+                class="exclamation ${classMap({ active: this.#constellationEventCount() > i })}"
+                .disabled=${true}>
+              <x-icon>exclamation</x-icon>
+            </button>
+          `)}
+        </div>
+        <div class="ending legendary" style=${styleMap(this.#endingsPositions('legendary'))}>
+          ${range(5).map(i => html`
+            <button
+                class="exclamation ${classMap({ active: this.#constellationEventCount() > i })}"
+                .disabled=${true}>
+              <x-icon>exclamation</x-icon>
+            </button>
+          `)}
+        </div>
       `)}
 
-      <img class="sheet ${classMap({ [this.type]: true })}" src=${this.sheetUrl()}>
+      <img class="sheet${classMap({ [this.type]: true })}" src=${this.#sheetUrl()}>
     `;
   }
 }

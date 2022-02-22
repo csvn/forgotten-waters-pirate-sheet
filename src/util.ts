@@ -6,6 +6,10 @@ export function keys<T>(o: T): (keyof T)[] {
   return Object.keys(o) as any;
 }
 
+export function throws<T extends Error>(err: T): never {
+  throw err;
+}
+
 export function range(index: number) {
   return Array.from({ length: index }, (_, i) => i);
 }

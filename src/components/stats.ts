@@ -37,6 +37,18 @@ export class Stats extends LitElement {
       -webkit-mask-image: url('${unsafeCSS(svgIcons + '#cross-mask')}');
       animation: grow 0.4s cubic-bezier(.71,.51,.58,2.4);
     }
+    .stat-value.pulse:not(:hover):not(.active) {
+      --to: var(--hint);
+      animation: pulse 2s linear infinite;
+    }
+
+    #help {
+      cursor: help;
+      color: var(--hint-active);
+      position: absolute;
+      right: -10%;
+      bottom: -10%;
+    }
 
     @keyframes grow {
       0% {
@@ -46,10 +58,23 @@ export class Stats extends LitElement {
         transform: scale(1);
       }
     }
+
+    @keyframes pulse {
+      0% {
+        background-color: transparent;
+      }
+      35% {
+        background-color: var(--to);
+      }
+      70%, 100% {
+        background-color: transparent;
+      }
+    }
   `;
 
   #stateController = new StateController(this);
 
+  @state() declare pulse?: boolean;
   @state() declare state: State;
 
   #isActive(skill: keyof SkillsState, value: number) {
@@ -68,8 +93,16 @@ export class Stats extends LitElement {
     return html`
       <div class="labels"></div>
       ${repeat(this.#skillTypes(), skill => repeat(range(8), value => html`
-        <button class="stat-value${classMap({ active: this.#isActive(skill, value) })}" @click=${() => this.#setStat(skill, value)}></button>
+        <button class="stat-value${classMap({ pulse: this.pulse!, active: this.#isActive(skill, value) })}" @click=${() => this.#setStat(skill, value)}></button>
       `))}
+
+      <x-icon
+          id="help"
+          title="Click stat boxes to raise or lower stats"
+          @mouseenter=${() => this.pulse = true}
+          @mouseleave=${() => this.pulse = false}>
+        questionmark
+      </x-icon>
     `;
   }
 }

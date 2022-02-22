@@ -18,23 +18,31 @@ export const generalCss = css`
     background-color: var(--primary-alt);
   }
 
-  input,
+  input:not([type="checkbox"]),
   select {
-    color: var(--on-bg);
-    background-color: rgba(255, 255, 255, .3);
+    display: block;
+    color: var(--on-input);
+    background-color: var(--input);
+    border: solid 1px var(--border);
     border-radius: 5px;
     font-size: inherit;
     font-family: inherit;
     line-height: 1.8;
     padding: 0 10px;
   }
+  input:not([type="checkbox"]):focus {
+    background-color: var(--input-active);
+  }
   select option {
-    background-color: var(--bg-alt);
+    background-color: var(--input);
+  }
+  select option[selected] {
+    background-color: var(--input-active);
   }
 
-  label > input,
-  label > select {
-    margin-left: 15px;
+  input[type="checkbox"] {
+    margin-left: 20px;
+    transform: scale(1.8);
   }
 `;
 
@@ -42,12 +50,14 @@ export const mainCss = css`
   :host {
     display: grid;
     grid:
-      "header header header" auto
-      "controls main aside" 1fr
-      "footer footer footer" auto
-      / auto 1fr auto;
-    gap: 20px;
-    padding: 15px 30px 50px;
+      "header header" auto
+      "controls main" 1fr
+      "footer footer" auto
+      / auto 1fr;
+  }
+
+  header, x-controls {
+    background-color: var(--bg-alt);
   }
 
   header {
@@ -55,11 +65,17 @@ export const mainCss = css`
     grid-area: header;
     align-items: center;
     gap: 20px;
+    padding: 5px 25px;
   }
 
   header h1 {
+    font-size: 1.6em;
     flex: 1;
     margin: 0;
+  }
+
+  main {
+    padding: 25px;
   }
 
   .sheets {
@@ -71,12 +87,9 @@ export const mainCss = css`
     justify-items: center;
   }
 
-  aside {
-    grid-area: aside;
-  }
-
   footer {
     grid-area: footer;
+    text-align: center;
   }
 
   @media (max-width: 2300px) {

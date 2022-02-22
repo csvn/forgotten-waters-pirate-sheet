@@ -7,6 +7,7 @@ import './components/coin';
 import './components/controls';
 import './components/icon';
 import './components/sheet';
+import './components/form-section';
 
 
 @customElement('x-root')
@@ -38,10 +39,6 @@ export class View extends LitElement {
         <x-sheet type="constellation"></x-sheet>
         <x-sheet type="endings"></x-sheet>
       </main>
-
-      <aside>
-        <p></p>
-      </aside>
 
       <footer>
         <p>Copyright © Dunno, 2022</p>
