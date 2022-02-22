@@ -136,20 +136,22 @@ var Bt=Object.defineProperty,It=Object.defineProperties;var Vt=Object.getOwnProp
       width: var(--size);
       height: var(--size);
       user-select: none;
-      filter: brightness(1.25);
+      filter: var(--filter);
       transform: rotate(var(--image-rotation));
     }
     .coin.reRoll {
       --image-rotation: 100deg;
+      --filter: var(--coin-re-roll-filter);
       background-image: url('${x(De.reRoll)}');
     }
     .coin.misfortune {
       --image-rotation: 35deg;
+      --filter: var(--coin-misfortune-filter);
       background-image: url('${x(De.misfortune)}');
-      filter: brightness(1.6);
     }
     .coin.constellationEvent {
       --image-rotation: 45deg;
+      --filter: var(--coin-constellation-event-filter);
       background-image: url('${x(De.constellationEvent)}');
     }
   `]),Fe);Be([v()],ae.prototype,"state",2);Be([H()],ae.prototype,"type",2);ae=Be([m("x-coin")],ae);var hs=Object.defineProperty,gs=Object.getOwnPropertyDescriptor,Mt=(e,t,a,s)=>{for(var r=s>1?void 0:s?gs(t,a):t,o=e.length-1,i;o>=0;o--)(i=e[o])&&(r=(s?i(t,a,r):i(r))||r);return s&&r&&hs(t,a,r),r},Ye,u,T,f,j,ce,bs,pe,fs,N,$t,de,_s,ue,vs,he,ms,ge,ws,be,ys,fe,xs,_e,Ss;let Ve=(Ye=class extends _{constructor(){super(...arguments);l(this,f);l(this,ce);l(this,pe);l(this,N);l(this,de);l(this,ue);l(this,he);l(this,ge);l(this,be);l(this,fe);l(this,_e);l(this,u,new k(this));l(this,T,Ot(n(this,u)))}render(){var e;return d`
@@ -547,6 +549,9 @@ var Bt=Object.defineProperty,It=Object.defineProperties;var Vt=Object.getOwnProp
     .inputs input:focus-visible {
       border-color: var(--hint-active);
       outline: 0;
+    }
+    .inputs.cover input {
+      text-align: center;
     }
     .inputs.background input {
       font-size: calc(var(--base-height, 1) * 24px);
