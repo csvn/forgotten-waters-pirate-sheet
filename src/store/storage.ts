@@ -1,9 +1,14 @@
-import { get, set, del, createStore } from 'idb-keyval';
+import { get, set, del, createStore, clear } from 'idb-keyval';
 import { WebStorage } from 'redux-persist';
 
 
 export class IDBStorage implements WebStorage {
   #store = createStore('v0', 'Pirate');
+
+  constructor() {
+    // Remove unused data
+    clear();
+  }
 
   async getItem(key: string) {
     return JSON.stringify(await get(key, this.#store));
