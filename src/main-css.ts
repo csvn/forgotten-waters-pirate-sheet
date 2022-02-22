@@ -95,7 +95,31 @@ export const mainCss = css`
     text-align: center;
   }
 
-  @media (max-width: 2300px) {
+  @media (max-width: 1820px) {
+    .sheets {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 1900px) and (min-height: 1140px) {
+    .sheets {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 1970px) and (min-height: 1200px) {
+    .sheets {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 2050px) and (min-height: 1240px) {
+    .sheets {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 2080px) and (min-height: 1280px) {
     .sheets {
       grid-template-columns: 1fr;
     }
