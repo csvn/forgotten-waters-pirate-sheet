@@ -19,3 +19,7 @@ declare module '*.json' {
 interface Array<T> {
   at(index: number): T;
 }
+
+interface ImportMeta {
+  env: { BASE_URL: string };
+}

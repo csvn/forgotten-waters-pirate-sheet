@@ -8,7 +8,7 @@ export function updateThemeFactory() {
   link.rel = 'stylesheet';
 
   const themeNames = ['bright-parchment', 'bright-skies', 'moldy-parchment', 'ocean-heart'];
-  const urlMap = new Map(themeNames.map(id => [id,`/${id}.css`]));
+  const urlMap = new Map(themeNames.map(id => [id, `${import.meta.env.BASE_URL}${id}.css`]));
 
   return (state: State) => {
     const t = state.settings.theme;
