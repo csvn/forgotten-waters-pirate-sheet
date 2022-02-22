@@ -13,14 +13,14 @@
   "private": true,
   "dependencies": {
     "@lit-labs/observers": "^1.0.1",
-    "@reduxjs/toolkit": "^1.7.1",
+    "@reduxjs/toolkit": "^1.7.2",
     "idb-keyval": "^6.1.0",
     "immer": "^9.0.12",
-    "lit": "^2.1.1",
+    "lit": "^2.2.0",
     "redux-persist": "^6.0.0"
   },
   "devDependencies": {
-    "vite": "^2.7.13",
+    "vite": "^2.8.4",
     "wawoff2": "^2.0.1"
   }
 }

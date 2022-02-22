@@ -1,5 +1,6 @@
 import { LitElement, html, css } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
+import { live } from 'lit/directives/live.js';
 import { generalCss } from '../main-css';
 import { StateController } from '../store/controller';
 import { actions, State } from '../state';
@@ -40,6 +41,7 @@ export class View extends LitElement {
 
   #stateController = new StateController(this);
   #inputAction = inputActionFactory(this.#stateController);
+  readonly #defaultThemeValue = '--default--';
 
   get #social() {
     return this.state.social;
@@ -85,6 +87,11 @@ export class View extends LitElement {
     this.#stateController.dispatch(actions.ui.toggleSettings());
   }
 
+  #selectTheme(event: Event) {
+    const value = (event.currentTarget as HTMLSelectElement).value;
+    this.#stateController.dispatch(actions.settings.selectTheme(value === this.#defaultThemeValue ? undefined : value));
+  }
+
   #toggleSounds() {
     this.#stateController.dispatch(actions.settings.toggleSounds());
   }
@@ -101,7 +108,7 @@ export class View extends LitElement {
         <label for="pirate">Pirate type</label>
         <select id="pirate" name="pirate" .value=${this.#social.pirate ?? ''} @change=${this.#selectPirate}>
           <option value="">Select a pirate!</option>
-          ${this.state.data.pirates.map(({ id, name }: { id: string, name: string }) => html`
+          ${this.state.data.pirates.map(({ id, name }) => html`
             <option value=${id} .selected=${id === this.#social.pirate}>${name}</option>
           `)}
         </select>
@@ -122,6 +129,15 @@ export class View extends LitElement {
       </x-form-section>
 
       <x-form-section legend="Settings" .open=${this.state.ui.isSettingsOpen} @toggle=${this.#toggleSettings}>
+        <label for="theme">Theme</label>
+        <select id="theme" name="theme" .value=${live(this.state.settings.theme ?? this.#defaultThemeValue)} @change=${this.#selectTheme}>
+          <option value=${this.#defaultThemeValue}>Comforting sky</option>
+          <option value="moldy-parchment">Moldy parchment</option>
+          <option value="ocean-heart">Ocean's heart</option>
+          <option value="bright-skies">Bright skies</option>
+          <option value="bright-parchment">Bright parchment</option>
+        </select>
+
         <label for="font">Font</label>
         <select id="font" name="font" @change=${this.#changeFont}>
           <option value="Mansalva" selected>Mansalva</option>

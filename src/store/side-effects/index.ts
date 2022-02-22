@@ -4,17 +4,20 @@ import { fetchPirates } from '../../state/data';
 import { delay } from '../../util';
 import { importExport } from './import-export';
 import { appSoundEffects } from './play-sounds';
+import { updateThemeFactory } from './theme';
 
 
 type PotentialPromise<T> = T | Promise<T>;
 type EffectCallback = (action: AnyAction, state: State) => PotentialPromise<AnyAction | undefined | void>;
 
 export const sideEffectsMiddleware: Middleware = store => {
+  const updateTheme = updateThemeFactory();
   runInitialSideEffects(store);
 
   return next => (action: AnyAction) => {
     const res = next(action);
-    runSideEffects(store, res, store.getState())
+    runSideEffects(store, res, store.getState());
+    updateTheme(store.getState());
     return res;
   };
 }

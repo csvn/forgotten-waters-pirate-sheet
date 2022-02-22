@@ -14,3 +14,8 @@ declare module '*.json' {
   const json: any;
   export default json;
 }
+
+
+interface Array<T> {
+  at(index: number): T;
+}

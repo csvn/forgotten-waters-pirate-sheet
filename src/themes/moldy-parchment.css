@@ -1,0 +1,24 @@
+:root {
+  /* Colors */
+  --on-bg: rgb(255 255 255 / 90%);
+  --bg: rgb(37 33 30);
+  --bg-alt: rgb(46 43 40);
+  --on-primary: rgb(255 255 255 / 90%);
+  --primary: rgb(116 89 39);
+  --primary-alt: rgb(116 100 45);
+  --inactive: rgb(255 255 255 / 50%);
+  --hint: rgb(65 114 186 / 40%);
+  --hint-active: rgb(65 114 186 / 85%);
+  --border: rgb(110 110 110);
+  --input: rgb(27 27 27);
+  --input-active: rgb(50 50 50);
+  --on-input: rgb(255 255 255 / 90%);
+  --scrollbar: var(--primary);
+  --scrollbar-active: var(--primary-alt);
+
+  /* Transforms */
+  --sheet-filter: hue-rotate(8deg) invert(0.88);
+  --coin-re-roll-filter: brightness(1.25);
+  --coin-misfortune-filter: brightness(1.6);
+  --coin-constellation-event-filter: brightness(1.25);
+}
